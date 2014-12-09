@@ -1,0 +1,17 @@
+Pasos a seguir para compilar:
+
+cd programming
+
+mkdir build
+
+cd build
+
+ccmake ..
+(marcar opciones, pulsar "c" y luego "g")
+
+make
+
+cd bin
+(aquí están los ejecutables creados)
+
+
