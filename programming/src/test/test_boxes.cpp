@@ -2,11 +2,14 @@
 #include "../libraries/webcam/webcam.h"
 #include "../libraries/color_detector/color_detector.h"
 
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
+
 using namespace cv;
 
 int main()
 {
-
     Webcam camera(-1);
 
     while(1){

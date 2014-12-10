@@ -16,6 +16,11 @@ add_executable(test_boxes test_boxes.cpp)
 target_link_libraries(test_boxes color_detector webcam debuga ${OpenCV_LIBS})
 ENDIF ()
 
+OPTION(TEST_TURRET "Can detection in RGB" 1)
+IF (TEST_TURRET)
+add_executable(test_Turret test_Turret.cpp)
+target_link_libraries(test_Turret Turret ${OpenCV_LIBS})
+ENDIF ()
 
 ### ESTRUCTURA PARA ANADIR TESTS
 #OPTION(VARIABLE "<descripcion>" 1)

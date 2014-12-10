@@ -1,4 +1,5 @@
 add_subdirectory(debug)
 add_subdirectory(webcam)
 add_subdirectory(color_detector)
-
+add_subdirectory(Turret)
+#add_subdirectory(FaceDetector)
