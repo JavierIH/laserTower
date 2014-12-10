@@ -10,7 +10,7 @@ Mat extractChannel(Mat image, int channel){
     return out;
 }
 
-Mat detectColor(string color,Mat image){
+Mat detectColorRGB(string color,Mat image){
     Mat blue=extractChannel(image,0);
     Mat green=extractChannel(image,1);
     Mat red=extractChannel(image,2);

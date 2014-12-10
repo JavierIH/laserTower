@@ -5,8 +5,6 @@
 #include <sstream>
 #include <vector>
 #include <opencv2/opencv.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 
 #define DEBUG_LEVEL 0
 

@@ -10,6 +10,12 @@ add_executable(test_webcam test_webcam.cpp)
 target_link_libraries(test_webcam webcam debuga ${OpenCV_LIBS})
 ENDIF ()
 
+OPTION(TEST_BOXES "Bounding boxes of cans" 1)
+IF (TEST_BOXES)
+add_executable(test_boxes test_boxes.cpp)
+target_link_libraries(test_boxes color_detector webcam debuga ${OpenCV_LIBS})
+ENDIF ()
+
 
 ### ESTRUCTURA PARA ANADIR TESTS
 #OPTION(VARIABLE "<descripcion>" 1)
