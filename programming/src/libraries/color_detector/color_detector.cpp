@@ -25,3 +25,11 @@ Mat detectColorRGB(string color,Mat image){
 
     return image;
 }
+
+cv::Mat1b dilation(Mat1b input, int level){
+    Mat1b output;
+    if(level>0)dilate(input, output, Mat(),Point(-1,-1),level);
+    if(level<0)erode(input, output, Mat(),Point(-1,-1),-level);
+
+    return output;
+}

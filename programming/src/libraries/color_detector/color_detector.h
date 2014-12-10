@@ -5,6 +5,8 @@
 
 cv::Mat extractChannel(cv::Mat,int);
 cv::Mat detectColorRGB(std::string, cv::Mat);
+cv::Mat1b dilation(cv::Mat1b,int);
+
 
 
 #endif // RGB_DETECTOR_H
