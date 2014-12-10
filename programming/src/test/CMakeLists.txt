@@ -1,7 +1,7 @@
 OPTION(TEST_RGB_CAN "Can detection in RGB" 1)
 IF (TEST_RGB_CAN)
 add_executable(test_rgb_can test_rgb_can.cpp)
-target_link_libraries(test_rgb_can debuga ${OpenCV_LIBS})
+target_link_libraries(test_rgb_can color_detector webcam debuga ${OpenCV_LIBS})
 ENDIF ()
 
 OPTION(TEST_WEBCAM "Testing the camera" 1)

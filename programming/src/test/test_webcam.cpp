@@ -1,8 +1,5 @@
 #include "../libraries/debug/debug.h"
 #include "../libraries/webcam/webcam.h"
-#include <cv.h>
-#include <highgui.h>
-#include <math.h>
 
 using namespace cv;
 

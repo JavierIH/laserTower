@@ -1,7 +1,6 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -18,8 +17,6 @@
 #define STATE 5
 #define MOVE 6
 #define RAIDER 13
-
-
 
 using namespace std;
 

@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 2.6)
 
 set(CMAKE_MODULE_PATH ${LASERTOWER_SOURCE_DIR})
 find_package (OpenCV)
-#find_package (ZBar0)
+find_package (ZBar0)
 set(TRUNK_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(LASERTOWER_BIN_DIR "${TRUNK_DIR}/build/bin")
