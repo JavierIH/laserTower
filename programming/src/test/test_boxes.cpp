@@ -5,9 +5,7 @@
 
 using namespace cv;
 
-int main()
-{
-
+void old_test(){
     Webcam camera(1);
 
     while(1){
@@ -67,5 +65,21 @@ int main()
         }
         if (waitKey(30) == 27) break;
     }
-
 }
+
+int main()
+{
+
+    Webcam camera(-1);
+
+    while(1){
+        Mat image=camera.getFrame();
+        imshow("Original",image);
+        vector<Point> target;
+        target=getTarget("red",image);
+        report(INFO,"Objetivos: "+to_string(target));
+        if (waitKey(10) == 27) break;
+    }
+}
+
+

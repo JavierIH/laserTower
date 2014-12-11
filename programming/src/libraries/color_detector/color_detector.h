@@ -7,7 +7,7 @@ cv::Mat extractChannel(cv::Mat,int);
 cv::Mat detectColorRGB(std::string, cv::Mat);
 cv::Mat1b dilation(cv::Mat1b,int);
 
-std::vector<cv::Point> getTarget(cv::Mat,std::string);
+std::vector<cv::Point> getTarget(std::string, cv::Mat);
 
 
 

@@ -34,18 +34,17 @@ cv::Mat1b dilation(Mat1b input, int level){
     return output;
 }
 
-vector<Point> getTarget(Mat image, string color){
-    report(ERROR,"ESTO AUN NO RULA!");
+vector<Point> getTarget(string color, Mat image){
 
     Mat detection=detectColorRGB(color,image);
 
     Mat1b thresh;
     threshold(detection,thresh,100,255,THRESH_BINARY);
 
-    thresh=dilation(thresh,-20);
-    thresh=dilation(thresh,20);
+    thresh=dilation(thresh,-10);
+    thresh=dilation(thresh,10);
 
-    imshow("Threshold",thresh);
+    //imshow("Threshold",thresh);
 
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
@@ -59,7 +58,7 @@ vector<Point> getTarget(Mat image, string color){
         boundRect[i] = boundingRect( Mat(contours_poly[i]) );
     }
 
-    Mat drawing = Mat::zeros( thresh.size(), CV_8UC3 );
+    //Mat drawing = Mat::zeros( thresh.size(), CV_8UC3 );
 
     int min_area=10000;
     int max_area=60000;
@@ -74,14 +73,10 @@ vector<Point> getTarget(Mat image, string color){
         if(!boundRect.empty()){
             report(OK,"Se han encontrado latas asesinas!!!");
             for( int i = 0; i< boundRect.size(); i++ ){
-                Scalar color = Scalar(255, 0, 0);
-                rectangle( drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0 );
                 Point center(boundRect[i].x+boundRect[i].width/2,boundRect[i].y+boundRect[i].height/2);
                 target.push_back(center);
             }
         }
-        report(OK,"Numero de contornos: "+to_string(contours.size()));
-        for( int i = 0; i< target.size(); i++ ) report(INFO,"Centro de contornos "+to_string(target[i]));
     }
     else report(INFO,"NO se han encontrado objetivos");
 
