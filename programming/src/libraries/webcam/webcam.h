@@ -9,6 +9,7 @@ private:
      int id;
 public:
      Webcam(int);
+     bool destroy();
      cv::Mat getFrame();
      void cleanBuffer();
 };

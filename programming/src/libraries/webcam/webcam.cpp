@@ -8,6 +8,12 @@ Webcam::Webcam(int device=-1){
         capture=cap;
         report(OK,"Camera initialized correctly");
     }
+
+}
+
+bool Webcam::destroy()
+{
+    capture.release();
 }
 
 cv::Mat Webcam::getFrame(){
