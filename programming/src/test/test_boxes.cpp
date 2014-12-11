@@ -2,9 +2,6 @@
 #include "../libraries/webcam/webcam.h"
 #include "../libraries/color_detector/color_detector.h"
 
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
 
 using namespace cv;
 
@@ -16,6 +13,7 @@ int main()
     while(1){
         Mat image=camera.getFrame();
         imshow("Original",image);
+
 
         Mat detection=detectColorRGB("red",image);
         //imshow("Color rojo",detection);
@@ -69,4 +67,5 @@ int main()
         }
         if (waitKey(30) == 27) break;
     }
+
 }

@@ -17,7 +17,7 @@ bool Webcam::destroy()
 }
 
 cv::Mat Webcam::getFrame(){
-    cleanBuffer();
+    //cleanBuffer();
     cv::Mat frame;
     capture.read(frame);
     return frame;

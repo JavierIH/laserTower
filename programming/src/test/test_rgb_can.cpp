@@ -11,7 +11,6 @@ int main()
 
     while(1){
         Mat image=camera.getFrame();
-
         imshow("Original",image);
         imshow("Color azul",detectColorRGB("blue",image));
         if (waitKey(30) == 27) break;
