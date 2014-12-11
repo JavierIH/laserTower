@@ -6,6 +6,8 @@
 #include <string>
 #include <SerialStream.h>
 
+#include <RdAudioManager.hpp>
+
 class Turret
 {
     public:
@@ -49,6 +51,10 @@ class Turret
 
        SerialPort* serialPort;
        std::string serial_port_name;
+
+
+       //-- Audio-related functions
+       rd::RdAudioManager * audioManager;
 
 };
 

@@ -12,6 +12,10 @@ Turret::Turret(const std::string serial_port)
     connected = false;
     serial_port_name = serial_port;
     serialPort = NULL;
+
+    //-- Configure AudioManager
+    audioManager = rd::RdAudioManager::getAudioManager();
+    audioManager->load("../../share/01_milshot.wav", "shoot", rd::RdAudioManager::FX);
 }
 
 void Turret::moveTiltAbs(float angle_absolute)
@@ -112,8 +116,8 @@ void Turret::movePanInc(float angle_increment)
 
 bool Turret::shoot()
 {
-    std::cerr << "[Turret] Not implemented yet!" << std::endl;
-    return false;
+    audioManager->playSound("shoot", 0);
+    return true;
 }
 
 bool Turret::LED()
@@ -228,7 +232,7 @@ bool Turret::toggleLED()
     }
     else
     {
-        std::cout << "[Turret] Error: LED could not be toggled (no robot connected)"
+        std::cerr << "[Turret] Error: LED could not be toggled (no robot connected)"
                   << std::endl;
         return false;
     }
