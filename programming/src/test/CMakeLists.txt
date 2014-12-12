@@ -3,6 +3,7 @@ include_directories(${YARP_INCLUDE_DIRS})
 
 find_package(RD REQUIRED)
 include_directories(${RD_INCLUDE_DIRS})
+link_directories(${RD_LINK_DIRS})
 
 OPTION(TEST_RGB_CAN "Can detection in RGB" 1)
 IF (TEST_RGB_CAN)
@@ -25,7 +26,7 @@ ENDIF ()
 OPTION(TEST_TURRET "Testing turret movement" 1)
 IF (TEST_TURRET)
 add_executable(test_Turret test_Turret.cpp)
-target_link_libraries(test_Turret Turret ${OpenCV_LIBS})
+target_link_libraries(test_Turret Turret ${OpenCV_LIBS} ${RD_LIBRARIES})
 ENDIF ()
 
 OPTION(TEST_FACE_DETECTOR "Testing haar face detector" 1)
