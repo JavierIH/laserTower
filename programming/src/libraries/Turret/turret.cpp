@@ -24,10 +24,8 @@ void Turret::moveTiltAbs(float angle_absolute)
         if (angle_absolute <= LIMIT_TILT_MAX && angle_absolute >= LIMIT_TILT_MIN )
         {
             angle_tilt = angle_absolute;
-            std::vector<float> joints;
-            joints.push_back(angle_tilt);
-            joints.push_back(angle_pan);
-            //-- Send joint values
+            double joints[] = {angle_tilt, angle_pan};
+            position_controller->positionMove(joints);
         }
         else
         {
@@ -48,10 +46,8 @@ void Turret::movePanAbs(float angle_absolute)
         if (angle_absolute <= LIMIT_PAN_MAX && angle_absolute >= LIMIT_PAN_MIN )
         {
             angle_pan = angle_absolute;
-            std::vector<float> joints;
-            joints.push_back(angle_tilt);
-            joints.push_back(angle_pan);
-            //-- Send joint values
+            double joints[] = {angle_tilt, angle_pan};
+            position_controller->positionMove(joints);
         }
         else
         {
@@ -73,10 +69,8 @@ void Turret::moveTiltInc(float angle_increment)
         if (new_angle <= LIMIT_TILT_MAX && new_angle >= LIMIT_TILT_MIN )
         {
             angle_tilt = new_angle;
-            std::vector<float> joints;
-            joints.push_back(angle_tilt);
-            joints.push_back(angle_pan);
-            //-- Send joint values
+            double joints[] = {angle_tilt, angle_pan};
+            position_controller->positionMove(joints);
         }
         else
         {
@@ -97,10 +91,8 @@ void Turret::movePanInc(float angle_increment)
         if (new_angle <= LIMIT_PAN_MAX && new_angle >= LIMIT_PAN_MIN )
         {
             angle_pan = new_angle;
-            std::vector<float> joints;
-            joints.push_back(angle_tilt);
-            joints.push_back(angle_pan);
-            //-- Send joint values
+            double joints[] = {angle_tilt, angle_pan};
+            position_controller->positionMove(joints);
         }
         else
         {
@@ -128,13 +120,57 @@ bool Turret::testLED()
 bool Turret::start()
 {
     //-- Connect
+    if (!connected)
+    {
+        //-- Register custom plugin
+        YARP_REGISTER_PLUGINS(RdYarp);
+
+        //-- Start yarp network
+        yarp::os::Network::init();
+
+        //-- Check yarp server
+        if (!yarp::os::Network::checkNetwork())
+        {
+            std::cerr << "Please start a yarp name server first" << std::endl;
+            return false;
+        }
+
+        //-- Configure board driver
+        yarp::os::Property options;
+        options.put("device","RdSerialServoBoard");
+        options.put("remote","/turret");
+        options.put("local","/local");
+        yarp::dev::PolyDriver dd(options);
+        if(!dd.isValid())
+        {
+            std::cerr << "RdSerialServoBoard device not available" << std::endl;
+            dd.close();
+            yarp::os::Network::fini();
+            return false;
+        }
+
+        //-- Extract Position Control
+
+        bool ok = dd.view(position_controller);
+        if (!ok)
+        {
+            std::cerr << "[warning] Problems acquiring robot interface" << std::endl;
+            return false;
+        }
+        else
+        {
+            std::cerr << "[success] testAsibot acquired robot interface" << std::endl;
+        }
+        position_controller->setPositionMode();
+
+        //-- Now it is connected
+        connected = true;
+    }
 
     if (connected)
     {
-        std::vector<float> joints;
-        joints.push_back(angle_tilt);
-        joints.push_back(angle_pan);
-        //-- Send joint values
+        double joints[] = {angle_tilt, angle_pan};
+        position_controller->positionMove(joints);
     }
 
     return connected;

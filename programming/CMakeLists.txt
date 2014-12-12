@@ -22,8 +22,7 @@ set(LIBRARY_OUTPUT_PATH ${LASERTOWER_LIBS_DIR})
 set(EXECUTABLE_OUTPUT_PATH ${LASERTOWER_BIN_DIR})
 set(TEST_OUTPUT_PATH ${LASERTOWER_TESTS_DIR})
 
-find_package(RD REQUIRED)
-include_directories(${RD_INCLUDE_DIRS})
+
 
 add_subdirectory(src)
 

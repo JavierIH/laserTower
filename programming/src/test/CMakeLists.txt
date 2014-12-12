@@ -1,3 +1,9 @@
+find_package(YARP REQUIRED)
+include_directories(${YARP_INCLUDE_DIRS})
+
+find_package(RD REQUIRED)
+include_directories(${RD_INCLUDE_DIRS})
+
 OPTION(TEST_RGB_CAN "Can detection in RGB" 1)
 IF (TEST_RGB_CAN)
 add_executable(test_rgb_can test_rgb_can.cpp)

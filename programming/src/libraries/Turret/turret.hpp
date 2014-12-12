@@ -5,7 +5,12 @@
 #include <iostream>
 #include <string>
 
+#include <yarp/os/all.h>
+#include <yarp/dev/all.h>
+
 #include <RdAudioManager.hpp>
+
+YARP_DECLARE_PLUGINS(RdYarp);
 
 class Turret
 {
@@ -39,6 +44,9 @@ class Turret
 
        std::string serial_port_name;
 
+
+       //-- Position control:
+       yarp::dev::IPositionControl *position_controller;
 
        //-- Audio-related functions
        rd::RdAudioManager * audioManager;
