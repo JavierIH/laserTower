@@ -137,6 +137,8 @@ bool Turret::start()
 
         //-- Configure board driver
         yarp::os::Property options;
+        options.put("comport", "/dev/ttyACM0");
+        options.put("baudrate", "57600");
         options.put("device","RdSerialServoBoard");
         options.put("remote","/turret");
         options.put("local","/local");
@@ -157,10 +159,7 @@ bool Turret::start()
             std::cerr << "[warning] Problems acquiring robot interface" << std::endl;
             return false;
         }
-        else
-        {
-            std::cerr << "[success] testAsibot acquired robot interface" << std::endl;
-        }
+
         position_controller->setPositionMode();
 
         //-- Now it is connected
@@ -170,7 +169,7 @@ bool Turret::start()
     if (connected)
     {
         double joints[] = {angle_tilt, angle_pan};
-        position_controller->positionMove(joints);
+        //position_controller->positionMove(joints);
     }
 
     return connected;

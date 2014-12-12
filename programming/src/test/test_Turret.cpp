@@ -29,5 +29,6 @@ int main()
 
     printf("Homing turret\n");
     fflush(0);
+    myTurret.movePanAbs(45);
     usleep(1e6);
 }
