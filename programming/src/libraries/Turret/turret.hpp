@@ -47,9 +47,15 @@ class Turret
 
        //-- Position control:
        yarp::dev::IPositionControl *position_controller;
+       yarp::dev::PolyDriver dd;
+
+       //yarp::os::Port command_sender;
 
        //-- Audio-related functions
        rd::RdAudioManager * audioManager;
+
+       bool initConnection();
+       bool sendJoints();
 
 };
 

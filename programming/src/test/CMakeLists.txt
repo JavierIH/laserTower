@@ -26,7 +26,7 @@ ENDIF ()
 OPTION(TEST_TURRET "Testing turret movement" 1)
 IF (TEST_TURRET)
 add_executable(test_Turret test_Turret.cpp)
-target_link_libraries(test_Turret Turret ${OpenCV_LIBS} ${RD_LIBRARIES})
+target_link_libraries(test_Turret Turret ${YARP_LIBRARIES} ${OpenCV_LIBS} ${RD_LIBRARIES})
 ENDIF ()
 
 OPTION(TEST_FACE_DETECTOR "Testing haar face detector" 1)

@@ -24,8 +24,7 @@ void Turret::moveTiltAbs(float angle_absolute)
         if (angle_absolute <= LIMIT_TILT_MAX && angle_absolute >= LIMIT_TILT_MIN )
         {
             angle_tilt = angle_absolute;
-            double joints[] = {angle_tilt, angle_pan};
-            position_controller->positionMove(joints);
+            sendJoints();
         }
         else
         {
@@ -46,8 +45,7 @@ void Turret::movePanAbs(float angle_absolute)
         if (angle_absolute <= LIMIT_PAN_MAX && angle_absolute >= LIMIT_PAN_MIN )
         {
             angle_pan = angle_absolute;
-            double joints[] = {angle_tilt, angle_pan};
-            position_controller->positionMove(joints);
+            sendJoints();
         }
         else
         {
@@ -69,8 +67,7 @@ void Turret::moveTiltInc(float angle_increment)
         if (new_angle <= LIMIT_TILT_MAX && new_angle >= LIMIT_TILT_MIN )
         {
             angle_tilt = new_angle;
-            double joints[] = {angle_tilt, angle_pan};
-            position_controller->positionMove(joints);
+            sendJoints();
         }
         else
         {
@@ -91,8 +88,7 @@ void Turret::movePanInc(float angle_increment)
         if (new_angle <= LIMIT_PAN_MAX && new_angle >= LIMIT_PAN_MIN )
         {
             angle_pan = new_angle;
-            double joints[] = {angle_tilt, angle_pan};
-            position_controller->positionMove(joints);
+            sendJoints();
         }
         else
         {
@@ -113,7 +109,7 @@ bool Turret::shoot()
 
 bool Turret::testLED()
 {
-    std::cerr << "[Turret] Not connected yet!" << std::endl;
+    std::cerr << "[Turret] TestLED() not implemented yet!" << std::endl;
     return false;
 }
 
@@ -122,54 +118,12 @@ bool Turret::start()
     //-- Connect
     if (!connected)
     {
-        //-- Register custom plugin
-        YARP_REGISTER_PLUGINS(RdYarp);
-
-        //-- Start yarp network
-        yarp::os::Network::init();
-
-        //-- Check yarp server
-        if (!yarp::os::Network::checkNetwork())
-        {
-            std::cerr << "Please start a yarp name server first" << std::endl;
-            return false;
-        }
-
-        //-- Configure board driver
-        yarp::os::Property options;
-        options.put("comport", "/dev/ttyACM0");
-        options.put("baudrate", "57600");
-        options.put("device","RdSerialServoBoard");
-        options.put("remote","/turret");
-        options.put("local","/local");
-        yarp::dev::PolyDriver dd(options);
-        if(!dd.isValid())
-        {
-            std::cerr << "RdSerialServoBoard device not available" << std::endl;
-            dd.close();
-            yarp::os::Network::fini();
-            return false;
-        }
-
-        //-- Extract Position Control
-
-        bool ok = dd.view(position_controller);
-        if (!ok)
-        {
-            std::cerr << "[warning] Problems acquiring robot interface" << std::endl;
-            return false;
-        }
-
-        position_controller->setPositionMode();
-
-        //-- Now it is connected
-        connected = true;
+        connected = initConnection();
     }
 
     if (connected)
     {
-        double joints[] = {angle_tilt, angle_pan};
-        //position_controller->positionMove(joints);
+        sendJoints();
     }
 
     return connected;
@@ -184,7 +138,58 @@ bool Turret::stop()
 
 bool Turret::destroy()
 {
-
+    //command_sender.close();
+    dd.close();
     return true;
 }
 
+bool Turret::initConnection()
+{
+    //-- Register custom plugin
+    YARP_REGISTER_PLUGINS(RdYarp);
+
+    //-- Start yarp network
+    yarp::os::Network::init();
+
+    //-- Check yarp server
+    if (!yarp::os::Network::checkNetwork())
+    {
+        std::cerr << "Please start a yarp name server first" << std::endl;
+        return false;
+    }
+
+    //-- Configure board driver
+    yarp::os::Property options;
+    options.put("device","RdSerialServoBoard");
+    options.put("comport", "/dev/ttyACM0");
+    options.put("baudrate", "57600");
+    dd.open(options);
+    if(!dd.isValid())
+    {
+        std::cerr << "RdSerialServoBoard device not available" << std::endl;
+        dd.close();
+        yarp::os::Network::fini();
+        return false;
+    }
+
+    //-- Extract Position Control
+
+    bool ok = dd.view(position_controller);
+    if (!ok || position_controller == NULL)
+    {
+        std::cerr << "[warning] Problems acquiring robot interface" << std::endl;
+        return false;
+    }
+
+    position_controller->setPositionMode();
+
+    //-- Now it is connected
+    return true;
+}
+
+
+bool Turret::sendJoints()
+{
+    double joints[] = {angle_tilt, angle_pan};
+    return position_controller->positionMove(joints);
+}

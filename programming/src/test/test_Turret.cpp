@@ -4,31 +4,40 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+#include <yarp/os/all.h>
 
-int main()
+int main(int argc, char ** argv)
 {
+    //-- Start yarp server
+//    yarp::os::Network::init();
+//    yarp::os::Network::runNameServer(argc, argv);
+
     Turret myTurret("/dev/ttyACM0");
 
     if (!myTurret.start())
     {
-        std::cerr << "Not able to connect!" << std::endl;
+        std::cerr << "[Test Turret] Not able to connect!" << std::endl;
         return 1;
     }
 
-    printf("Connected\n");
+    printf("[Test Turret] Connected\n");
     fflush(0);
-    usleep(1e6);
+    yarp::os::Time::delay(2);
 
     myTurret.testLED();
-    usleep(1e6);
-    //myTurret.movePanAbs(25);
+    yarp::os::Time::delay(2);
+    myTurret.movePanAbs(25);
+    myTurret.moveTiltAbs(25);
     myTurret.shoot();
-    printf("Toggle LED\n");
+    printf("[Test Turret] Toggle LED\n");
     fflush(0);
-    usleep(1e6);
+    yarp::os::Time::delay(2);
 
-    printf("Homing turret\n");
+    printf("[Test Turret] Homing turret\n");
     fflush(0);
     myTurret.movePanAbs(45);
-    usleep(1e6);
+    yarp::os::Time::delay(2);
+
+    myTurret.destroy();
+    yarp::os::Network::fini();
 }
