@@ -96,20 +96,22 @@ module pan(){
 		union(){
 			difference(){
 				hull(){
-					cylinder(r=40,h=10);
-					translate([12.3,0,50])rotate([0,45,0])cube([85,36,40],center=true);
+					translate([0,0,0])cylinder(r=40,h=20);
+					translate([12.3,0,50])rotate([0,45,0])cube([85,36,29],center=true);
 				}
-				translate([-100,18,20])cube([200,12,100]);
+				translate([-100,18,10])cube([200,12,100]);
+				translate([-100,-58,10])cube([200,40,100]);
 			}
 			hull(){
 				translate([0,30,62])rotate([-90,0,0])cylinder(r=20,h=10);
 				translate([0,35,10])cube([70,10,20],center=true);
 			}
 			hull(){
-				cylinder(r=35,h=20);
-				translate([0,35,10])cube([70,10,20],center=true);
+				cylinder(r=35,h=10);
+				translate([0,35,5])cube([70,10,10],center=true);
 			}
 		}
+		translate([12.3,0,50])rotate([90,45,0])maxiservo(50);
 	}
 }
 
