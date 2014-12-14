@@ -63,7 +63,8 @@ void old_test(){
 
             imshow( "Contornos", drawing );
         }
-        if (waitKey(30) == 27) break;
+        char key = waitKey(30);
+        if ( key == 27 || key == 'q') break;
     }
 }
 
