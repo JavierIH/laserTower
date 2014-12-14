@@ -35,6 +35,12 @@ add_executable(test_FaceDetector test_FaceDetector.cpp)
 target_link_libraries(test_FaceDetector FaceDetector debuga webcam ${OpenCV_LIBS})
 ENDIF ()
 
+OPTION(TEST_CONTROL_LOOP "Testing turret control loop" 1)
+IF (TEST_CONTROL_LOOP)
+add_executable(test_control_loop test_control_loop.cpp)
+target_link_libraries(test_control_loop Turret FaceDetector ${YARP_LIBRARIES} ${OpenCV_LIBS} ${RD_LIBRARIES})
+ENDIF ()
+
 ### ESTRUCTURA PARA ANADIR TESTS
 #OPTION(VARIABLE "<descripcion>" 1)
 #IF (VARIABLE)
