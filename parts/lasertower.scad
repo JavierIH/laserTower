@@ -12,7 +12,7 @@ module c_m(H){
 }
 
 radio_base=20;
-radio_barra=31/2;
+radio_barra=32.5/2;
 servo_x=69;
 servo_y=33;
 c_servo_x=servo_x+40;
