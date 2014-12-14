@@ -13,8 +13,8 @@ module c_m(H){
 
 radio_base=20;
 radio_barra=32.5/2;
-servo_x=69;
-servo_y=33;
+servo_x=67.5;
+servo_y=31.5;
 c_servo_x=servo_x+40;
 c_servo_y=servo_y;
 
@@ -99,6 +99,8 @@ module pan(){
 				hull(){
 					translate([0,0,0])cylinder(r=40,h=20);
 					translate([12.3,0,50])rotate([0,45,0])cube([85,36,29],center=true);
+					translate([-33,0,63])rotate([90,0,0])cylinder(r=4,h=36,$fn=30,center=true);
+					translate([-33,0,70])rotate([90,0,0])cylinder(r=4,h=36,$fn=30,center=true);
 				}
 				translate([-100,18,10])cube([200,12,100]);
 				translate([-100,-58,10])cube([200,40,100]);
@@ -113,12 +115,21 @@ module pan(){
 			}
 		}
 		translate([12.3,0,50])rotate([90,45,0])maxiservo(50);
+		translate([0,0,-1])cylinder(r=5.5,h=100,$fn=30);
+		translate([0,16.5,-1])cylinder(r=1.25,h=10,$fn=30);
+		translate([0,-16.5,-1])cylinder(r=1.25,h=10,$fn=30);
+		translate([16.5,0,-1])cylinder(r=1.25,h=10,$fn=30);
+		translate([-16.5,0,-1])cylinder(r=1.25,h=10,$fn=30);
+
+
+		translate([0,30,62])rotate([-90,0,0])m4(50);
+
 	}
 }
 
 
 
 
-base();
+//base();
 //adaptador();
-//pan();
+pan();
