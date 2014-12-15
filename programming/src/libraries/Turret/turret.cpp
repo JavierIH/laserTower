@@ -161,7 +161,7 @@ bool Turret::initConnection()
     //-- Configure board driver
     yarp::os::Property options;
     options.put("device","RdSerialServoBoard");
-    options.put("comport", "/dev/ttyACM0");
+    options.put("comport", serial_port_name.c_str());
     options.put("baudrate", "57600");
     dd.open(options);
     if(!dd.isValid())
