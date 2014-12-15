@@ -116,10 +116,10 @@ module pan(){
 		}
 		translate([12.3,0,50])rotate([90,45,0])maxiservo(50);
 		translate([0,0,-1])cylinder(r=5.5,h=100,$fn=30);
-		translate([0,16.5,-1])cylinder(r=1.25,h=10,$fn=30);
-		translate([0,-16.5,-1])cylinder(r=1.25,h=10,$fn=30);
-		translate([16.5,0,-1])cylinder(r=1.25,h=10,$fn=30);
-		translate([-16.5,0,-1])cylinder(r=1.25,h=10,$fn=30);
+		translate([0,15,-1])cylinder(r=1.25,h=10,$fn=30);
+		translate([0,-15,-1])cylinder(r=1.25,h=10,$fn=30);
+		translate([15,0,-1])cylinder(r=1.25,h=10,$fn=30);
+		translate([-15,0,-1])cylinder(r=1.25,h=10,$fn=30);
 
 
 		translate([0,30,62])rotate([-90,0,0])m4(50);
@@ -127,9 +127,38 @@ module pan(){
 	}
 }
 
+altura_bracket=40;
 
+module bracket(){
+	difference(){
+		hull(){
+			translate([0,0,altura_bracket])rotate([0,90,0])cylinder(r=20,h=85+8,center=true);
+			translate([0,0,0])cube([93,50,10],center=true);
+		}
+		translate([0,0,altura_bracket-1])
+			cube([85,70,altura_bracket*2],center=true);
+		translate([0,0,altura_bracket-11.5])
+			rotate([0,90,0])cylinder(r=1.35,h=85,$fn=30);
+		translate([0,0,altura_bracket+11.5])
+			rotate([0,90,0])cylinder(r=1.35,h=85,$fn=30);
+		translate([0,-11.5,altura_bracket])
+			rotate([0,90,0])cylinder(r=1.35,h=85,$fn=30);
+		translate([0,11.5,altura_bracket])
+			rotate([0,90,0])cylinder(r=1.35,h=85,$fn=30);
+		translate([0,0,altura_bracket])
+			rotate([0,90,0])m4(100);
+		translate([0,0,altura_bracket])
+			rotate([0,90,0])cylinder(r=5.5,h=100,$fn=40);
 
+		for ( i = [-4 : 3], j = [-2 : 1] ){
+		translate([5+10*i,5+10*j,0])m3(50);
+		}
+
+	}
+}
+
+bracket();
 
 //base();
 //adaptador();
-pan();
+//pan();
