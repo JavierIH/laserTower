@@ -5,14 +5,31 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include <string>
+#include <sstream>
 
 #include <yarp/os/all.h>
 #include <opencv2/opencv.hpp>
 
+
+//-- Can color definitions
+static const int RED_CAN = 0;
+static const int BLUE_CAN = 1;
+static const int GREEN_CAN = 2;
+
+//-- Min error to stop tracking:
+static const int THRESH_X = 20;
+static const int THRESH_Y = 20;
+
 void printUsage()
 {
-    std::cout << std::endl <<  "Usage: yes_we_can [can ids]" << std::endl << std::endl;
-    std::cout << "Where: [can ids] - Space-separated can ids, for example: 1 2 0" << std::endl << std::endl;
+    std::cout << std::endl <<  "Usage: yes_we_can [options]" << std::endl << std::endl;
+    std::cout << "Options: " << std::endl;
+    std::cout << "\t--help (shows usage)" << std::endl;
+    std::cout << "\t--port [serial port] (serial port to be used)" << std::endl;
+    std::cout << "\t--camera [integer id] (camera to be used)" << std::endl;
+    std::cout << "\t--cans [can id list] (sequence of cans to be shoot {as string}})" << std::endl << std::endl;
+
 }
 
 int main(int argc, char ** argv)
@@ -25,20 +42,40 @@ int main(int argc, char ** argv)
      *
      * *******************************************************************/
 
-    //-- Extract can ids from the command line
-    //----------------------------------------------------------------------
-    std::vector<int> can_ids;
+    //-- YARP Resource finder (used to extract command line arguments)
+    //---------------------------------------------------------------------
+    yarp::os::ResourceFinder resourceFinder;
+    resourceFinder.setVerbose(false);
+    resourceFinder.configure(argc, argv);
 
-    if (argc == 1)
+    //-- Show usage if requested:
+    //----------------------------------------------------------------------
+    if (resourceFinder.check("help"))
     {
         printUsage();
         return 1;
     }
 
-    for (int i = 1; i < argc; i++)
+    //-- Extract can ids from the command line
+    //----------------------------------------------------------------------
+    std::vector<int> can_ids;
+
+    if (!resourceFinder.check("cans"))
     {
-        can_ids.push_back(atoi(argv[i]));
-        std::cout << "New target added: " << argv[i] << std::endl;
+        std::cerr << "ERROR: no can sequence was specified!" << std::endl;
+        printUsage();
+        return 1;
+    }
+
+    std::string can_list =  resourceFinder.find("cans").asString();
+    std::stringstream can_list_ss(can_list);
+
+    while ( !can_list_ss.eof())
+    {
+        int temp;
+        can_list_ss >> temp;
+        can_ids.push_back(temp);
+        std::cout << "New target added: " << temp << std::endl;
     }
 
 
@@ -51,7 +88,14 @@ int main(int argc, char ** argv)
 
     //-- Setup Turret
     //-----------------------------------------------------------------------
-    Turret myTurret("/dev/ttyACM0"); //-- (Change port as desired)
+    //-- Read port from command line
+    std::string serial_port_name = resourceFinder.find("port").asString();
+    if (serial_port_name == "")
+        serial_port_name = "/dev/ttyACM0";
+    std::cout << "Connecting to serial port: " << serial_port_name << std::endl;
+
+    //-- Start turret
+    Turret myTurret(serial_port_name);
 
     if (!myTurret.start())
     {
@@ -70,7 +114,12 @@ int main(int argc, char ** argv)
 
     //-- Setup webcam
     //-----------------------------------------------------------------------
-    cv::VideoCapture capture(1);
+    int camera_id = -1;
+    if (resourceFinder.check("camera"))
+        camera_id = resourceFinder.find("camera").asInt();
+    std::cout << "Opening camera: " << camera_id << std::endl;
+
+    cv::VideoCapture capture(camera_id);
 
     if(!capture.isOpened())
     {
@@ -81,8 +130,8 @@ int main(int argc, char ** argv)
 
     //-- Setup P controller params
     //-----------------------------------------------------------------------
-    float kpx = 0.01;
-    float kpy = 0.01;
+    float kpx = 0.02;
+    float kpy = 0.02;
 
 
     /**********************************************************************
@@ -95,7 +144,7 @@ int main(int argc, char ** argv)
     //-- For each target
     for (int i = 0; i < can_ids.size(); i++)
     {
-        //-- Control loop goes here
+        //-- Loop to track target
         do
         {
             //-- Get image from webcam
@@ -141,7 +190,7 @@ int main(int argc, char ** argv)
             if ( key == 27 || key == 'q' )
                 break;
 
-        } while (true);
+        } while (error_x > );
     }
 
     myTurret.destroy();
