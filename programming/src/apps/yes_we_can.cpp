@@ -85,55 +85,64 @@ int main(int argc, char ** argv)
     float kpy = 0.01;
 
 
+    /**********************************************************************
+     * Program itself
+     * ********************************************************************
+     * This block is the program
+     *
+     * *******************************************************************/
 
-    //-- Control loop goes here
-    do
+    //-- For each target
+    for (int i = 0; i < can_ids.size(); i++)
     {
-        //-- Get image from webcam
-        cv::Mat frame;
-        capture.read(frame);
-
-        //-- Extract targets
-        std::vector<cv::Rect> faces = faceDetector.detect(frame);
-
-        //-- If target found
-        if (faces.size() > 0)
+        //-- Control loop goes here
+        do
         {
-            //-- calculate error
-            int center_x = faces[0].x + faces[0].width / 2;
-            int center_y = faces[0].y + faces[0].height / 2;
+            //-- Get image from webcam
+            cv::Mat frame;
+            capture.read(frame);
 
-            int error_x = frame.cols / 2 - center_x;
-            int error_y = frame.rows / 2 - center_y;
+            //-- Extract faces
+            std::vector<cv::Rect> faces = faceDetector.detect(frame);
 
-            std::cout << "----------------------------------------------" << std::endl;
-            std::cout << "Error x: " << error_x << std::endl;
-            std::cout << "Error y: " << error_y << std::endl;
+            //-- If target found
+            if (faces.size() > 0)
+            {
+                //-- calculate error
+                int center_x = faces[0].x + faces[0].width / 2;
+                int center_y = faces[0].y + faces[0].height / 2;
 
-            //-- P controller
-            int move_x = error_x * kpx;
-            int move_y = - error_y * kpy;
+                int error_x = frame.cols / 2 - center_x;
+                int error_y = frame.rows / 2 - center_y;
 
-            //-- Command motors
-            myTurret.movePanInc(move_x);
-            myTurret.moveTiltInc(move_y);
+                std::cout << "----------------------------------------------" << std::endl;
+                std::cout << "Error x: " << error_x << std::endl;
+                std::cout << "Error y: " << error_y << std::endl;
+
+                //-- P controller
+                int move_x = error_x * kpx;
+                int move_y = - error_y * kpy;
+
+                //-- Command motors
+                myTurret.movePanInc(move_x);
+                myTurret.moveTiltInc(move_y);
 
 
-            //-- Plotting
-            cv::rectangle(frame, faces[0], cv::Scalar(0, 0, 255));
-            cv::circle(frame, cv::Point(center_x, center_y ), 2, cv::Scalar(0, 0, 255), 2);
+                //-- Plotting
+                cv::rectangle(frame, faces[0], cv::Scalar(0, 0, 255));
+                cv::circle(frame, cv::Point(center_x, center_y ), 2, cv::Scalar(0, 0, 255), 2);
 
-        }
+            }
 
-        cv::circle(frame, cv::Point(frame.cols / 2, frame.rows / 2 ), 2, cv::Scalar(255, 0, 0), 2);
+            cv::circle(frame, cv::Point(frame.cols / 2, frame.rows / 2 ), 2, cv::Scalar(255, 0, 0), 2);
 
-        cv::imshow("out", frame);
-        char key = cv::waitKey(30);
-        if ( key == 27 || key == 'q' )
-            break;
+            cv::imshow("out", frame);
+            char key = cv::waitKey(30);
+            if ( key == 27 || key == 'q' )
+                break;
 
-    } while (true);
-
+        } while (true);
+    }
 
     myTurret.destroy();
     yarp::os::Network::fini();
