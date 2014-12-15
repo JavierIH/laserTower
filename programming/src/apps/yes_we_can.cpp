@@ -3,20 +3,55 @@
 #include "../libraries/debug/debug.h"
 
 #include <iostream>
-#include <unistd.h>
-#include <stdlib.h>
+#include <cstdlib>
+#include <cstring>
 
 #include <yarp/os/all.h>
 #include <opencv2/opencv.hpp>
 
+void printUsage()
+{
+    std::cout << std::endl <<  "Usage: yes_we_can [can ids]" << std::endl << std::endl;
+    std::cout << "Where: [can ids] - Space-separated can ids, for example: 1 2 0" << std::endl << std::endl;
+}
+
 int main(int argc, char ** argv)
 {
+
+    /**********************************************************************
+     * Setup
+     * ********************************************************************
+     * This block sets up everything needed for the program
+     *
+     * *******************************************************************/
+
+    //-- Extract can ids from the command line
+    //----------------------------------------------------------------------
+    std::vector<int> can_ids;
+
+    if (argc == 1)
+    {
+        printUsage();
+        return 1;
+    }
+
+    for (int i = 1; i < argc; i++)
+    {
+        can_ids.push_back(atoi(argv[i]));
+        std::cout << "New target added: " << argv[i] << std::endl;
+    }
+
+
+    //-- Setup YARP
+    //-----------------------------------------------------------------------
     //-- Start yarp server
 //    yarp::os::Network::init();
 //    yarp::os::Network::runNameServer(argc, argv);
 
+
     //-- Setup Turret
-    Turret myTurret("/dev/ttyACM0");
+    //-----------------------------------------------------------------------
+    Turret myTurret("/dev/ttyACM0"); //-- (Change port as desired)
 
     if (!myTurret.start())
     {
@@ -24,24 +59,32 @@ int main(int argc, char ** argv)
         return 1;
     }
 
-    printf("[Test] Turret Connected\n");
+    std::cout << "Turret is now connected" << std::endl;
 
 
     //-- Create face detector
+    //-----------------------------------------------------------------------
     FaceDetector faceDetector;
+    std::cout << "Face detector ready. Safety measures enabled!" << std::endl;
 
 
-    //-- Open webcam
+    //-- Setup webcam
+    //-----------------------------------------------------------------------
     cv::VideoCapture capture(1);
 
     if(!capture.isOpened())
     {
         report(ERROR,"Camera failed at opening");
+        return 1;
     }
 
-    //-- P controller params
+
+    //-- Setup P controller params
+    //-----------------------------------------------------------------------
     float kpx = 0.01;
     float kpy = 0.01;
+
+
 
     //-- Control loop goes here
     do
