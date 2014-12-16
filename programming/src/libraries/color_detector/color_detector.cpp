@@ -150,3 +150,33 @@ Mat detectColorRGB(int color, Mat image)
 
     return image;
 }
+Mat detectColorHSV(string color, Mat image ){
+
+
+    Mat HSV;
+    cvtColor(image,HSV,COLOR_BGR2HSV);
+    Mat imgThresholded;
+    int LowH=0;
+    int HighH=0;
+    const int LowS=35;
+    const int LowV=35;
+    const int HighS=255;
+    const int HighV=255;
+
+    if(color == "red"){
+        Mat thres1;
+        Mat thres2;
+        inRange(HSV, Scalar(0, LowS, LowV), Scalar(15, HighS, HighV), thres1);
+        inRange(HSV, Scalar(150, LowS, LowV), Scalar(179, HighS, HighV),thres2); //Threshold the image
+        imgThresholded=thres1+thres2;
+    }else{
+        if(color=="green") {LowH=30; HighH=60;}
+        else if(color=="blue") {LowH=90; HighH=120;}
+        else if(color=="yellow") {LowH=25; HighH=45;}
+        else report(ERROR, "Bad color detection");
+
+        inRange(HSV, Scalar(LowH, LowS, LowV), Scalar(HighH, HighS, HighV), imgThresholded); //Threshold the image
+    }
+    return imgThresholded;
+
+}

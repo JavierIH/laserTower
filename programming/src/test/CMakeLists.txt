@@ -41,6 +41,17 @@ add_executable(test_control_loop test_control_loop.cpp)
 target_link_libraries(test_control_loop Turret FaceDetector ${YARP_LIBRARIES} ${OpenCV_LIBS} ${RD_LIBRARIES})
 ENDIF ()
 
+OPTION(CONF_HSV "Configure HSV threshold")
+IF (CONF_HSV)
+add_executable(conf_hsv conf_hsv.cpp)
+target_link_libraries(conf_hsv debuga ${OpenCV_LIBS})
+ENDIF()
+OPTION(TEST_HSV_CAN "Can detection in HSV" 1)
+IF (TEST_HSV_CAN)
+add_executable(test_hsv_can test_hsv_can.cpp)
+target_link_libraries(test_hsv_can color_detector webcam debuga ${OpenCV_LIBS})
+ENDIF ()
+
 ### ESTRUCTURA PARA ANADIR TESTS
 #OPTION(VARIABLE "<descripcion>" 1)
 #IF (VARIABLE)
