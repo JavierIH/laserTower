@@ -157,7 +157,15 @@ int main(int argc, char ** argv)
             /*
              * ***** HERE IS WHERE TARGET IS EXTRACTED
              */
-            std::vector<cv::Point> targets = getTarget(can_ids[i], frame);
+            std::vector<cv::Rect> rects = getTarget(can_ids[i], frame);
+            std::vector<cv::Point> targets;
+
+            for(int i=0;i<rects.size();i++){
+                cv::Point center;
+                center.x=rects.at(i).x+rects.at(i).width/2;
+                center.y=rects.at(i).y+rects.at(i).height/2;
+                targets.push_back(center);
+            }
 
             if (targets.size() > 0)
             {

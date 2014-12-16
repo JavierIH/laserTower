@@ -1,3 +1,4 @@
+
 #include "../libraries/debug/debug.h"
 #include "../libraries/webcam/webcam.h"
 #include "../libraries/color_detector/color_detector.h"
@@ -76,9 +77,9 @@ int main()
     while(1){
         Mat image=camera.getFrame();
         imshow("Original",image);
-        vector<Point> target;
-        target=getTarget("red",image);
-        report(INFO,"Objetivos: "+to_string(target));
+        vector<Rect> rects;
+        rects=getTarget("red",image);
+        report(INFO,"Objetivos: "+to_string(rects));
         if (waitKey(10) == 27) break;
     }
 }

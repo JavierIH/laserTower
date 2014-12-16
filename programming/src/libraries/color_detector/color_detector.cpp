@@ -34,7 +34,7 @@ cv::Mat1b dilation(Mat1b input, int level){
     return output;
 }
 
-vector<Point> getTarget(std::string color, Mat image){
+vector<Rect> getTarget(std::string color, Mat image){
 
     Mat detection=detectColorRGB(color,image);
 
@@ -72,19 +72,19 @@ vector<Point> getTarget(std::string color, Mat image){
         }
         if(!boundRect.empty()){
             report(OK,"Se han encontrado latas asesinas!!!");
-            for( int i = 0; i< boundRect.size(); i++ ){
+            /*for( int i = 0; i< boundRect.size(); i++ ){
                 Point center(boundRect[i].x+boundRect[i].width/2,boundRect[i].y+boundRect[i].height/2);
                 target.push_back(center);
-            }
+            }*/
         }
     }
     else report(INFO,"NO se han encontrado objetivos");
 
-    return target;
+    return boundRect;
 }
 
 
-vector<Point> getTarget(int color, Mat image){
+vector<Rect> getTarget(int color, Mat image){
 
     Mat detection=detectColorRGB(color,image);
 
@@ -122,15 +122,15 @@ vector<Point> getTarget(int color, Mat image){
         }
         if(!boundRect.empty()){
             report(OK,"Se han encontrado latas asesinas!!!");
-            for( int i = 0; i< boundRect.size(); i++ ){
+            /*for( int i = 0; i< boundRect.size(); i++ ){
                 Point center(boundRect[i].x+boundRect[i].width/2,boundRect[i].y+boundRect[i].height/2);
                 target.push_back(center);
-            }
+            }*/
         }
     }
     else report(INFO,"NO se han encontrado objetivos");
 
-    return target;
+    return boundRect;
 }
 
 
