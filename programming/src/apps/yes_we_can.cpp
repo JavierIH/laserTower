@@ -144,55 +144,90 @@ int main(int argc, char ** argv)
     //-- For each target
     for (int i = 0; i < can_ids.size(); i++)
     {
-        //-- Loop to track target
+        //-- Loop to track targets
+        //---------------------------------------------------------------------------------------
         do
         {
             //-- Get image from webcam
             cv::Mat frame;
             capture.read(frame);
 
-            //-- Extract faces
-            std::vector<cv::Rect> faces = faceDetector.detect(frame);
 
-            //-- If target found
-            if (faces.size() > 0)
-            {
-                //-- calculate error
-                int center_x = faces[0].x + faces[0].width / 2;
-                int center_y = faces[0].y + faces[0].height / 2;
+            /*
+             * ***** HERE IS WHERE TARGET IS EXTRACTED
+             */
 
-                int error_x = frame.cols / 2 - center_x;
-                int error_y = frame.rows / 2 - center_y;
+            //-- calculate center of bounding box
+            int center_x = faces[0].x + faces[0].width / 2;
+            int center_y = faces[0].y + faces[0].height / 2;
 
-                std::cout << "----------------------------------------------" << std::endl;
-                std::cout << "Error x: " << error_x << std::endl;
-                std::cout << "Error y: " << error_y << std::endl;
+            //-- Calculate error
+            int error_x = frame.cols / 2 - center_x;
+            int error_y = frame.rows / 2 - center_y;
 
-                //-- P controller
-                int move_x = error_x * kpx;
-                int move_y = - error_y * kpy;
+            std::cout << "--------------DEBUG--------------------------------" << std::endl;
+            std::cout << "Error x: " << error_x << std::endl;
+            std::cout << "Error y: " << error_y << std::endl;
 
-                //-- Command motors
-                myTurret.movePanInc(move_x);
-                myTurret.moveTiltInc(move_y);
+            //-- P controller
+            int move_x = error_x * kpx;
+            int move_y = - error_y * kpy;
+
+            //-- Command motors
+            myTurret.movePanInc(move_x);
+            myTurret.moveTiltInc(move_y);
+
+            //-- Plotting target to have feedback
+            cv::rectangle(frame, faces[0], cv::Scalar(0, 0, 255));
+            cv::circle(frame, cv::Point(center_x, center_y ), 2, cv::Scalar(0, 0, 255), 2);
 
 
-                //-- Plotting
-                cv::rectangle(frame, faces[0], cv::Scalar(0, 0, 255));
-                cv::circle(frame, cv::Point(center_x, center_y ), 2, cv::Scalar(0, 0, 255), 2);
-
-            }
-
+            //-- This is the scope (substitute it by another thing if needed)
             cv::circle(frame, cv::Point(frame.cols / 2, frame.rows / 2 ), 2, cv::Scalar(255, 0, 0), 2);
+
+            //-- Show on screen things
+            cv::imshow("out", frame);
+            char key = cv::waitKey(30);
+            if ( key == 27 || key == 'q' )
+                return 0;
+
+        } while (error_x > THRESH_X || error_y > THRESH_Y );
+
+
+        //-- Safety loop: (Extract faces)
+        //-------------------------------------------------------------------------------------------
+        std::vector<cv::Rect> faces;
+        do
+        {
+            //-- Get image from webcam
+            cv::Mat frame;
+            capture.read(frame);
+
+            faces = faceDetector.detect(frame);
+
+            std::cout << "Face detected!! Waiting to shoot..." << std::endl;
+
+            //-- Plotting
+            cv::rectangle(frame, faces[0], cv::Scalar(0, 0, 255));
+            cv::circle(frame, cv::Point(center_x, center_y ), 2, cv::Scalar(0, 0, 255), 2);
+
 
             cv::imshow("out", frame);
             char key = cv::waitKey(30);
             if ( key == 27 || key == 'q' )
-                break;
+                return 0;
 
-        } while (error_x > );
+        } while (faces.size() > 0 );
+
+
+        //-- All is clear: shoot!!
+        //---------------------------------------------------------------------------------------------
+        myTurret.shoot();
+        std::cout << "Target \"" << can_ids.at(i) << "\" was shot down!" << std::endl;
     }
 
     myTurret.destroy();
     yarp::os::Network::fini();
+
+    return 0;
 }
