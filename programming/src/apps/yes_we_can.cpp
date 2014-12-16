@@ -141,7 +141,7 @@ int main(int argc, char ** argv)
      * *******************************************************************/
 
     //-- For each target
-    for (int i = 0; i < 2; i++ )//can_ids.size(); i++)
+    for (int i = 0; i < can_ids.size(); i++)
     {
         //-- Loop to track targets
         //---------------------------------------------------------------------------------------
@@ -157,7 +157,7 @@ int main(int argc, char ** argv)
             /*
              * ***** HERE IS WHERE TARGET IS EXTRACTED
              */
-            std::vector<cv::Point> targets = getTarget(i, frame);
+            std::vector<cv::Point> targets = getTarget(can_ids[i], frame);
 
             if (targets.size() > 0)
             {
@@ -234,7 +234,7 @@ int main(int argc, char ** argv)
         //-- All is clear: shoot!!
         //---------------------------------------------------------------------------------------------
         myTurret.shoot();
-        //std::cout << "Target \"" << can_ids.at(i) << "\" was shot down!" << std::endl;
+        std::cout << "Target \"" << can_ids.at(i) << "\" was shot down!" << std::endl;
 
     }
 
