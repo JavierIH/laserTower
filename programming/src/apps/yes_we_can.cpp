@@ -1,6 +1,7 @@
 #include "../libraries/Turret/turret.hpp"
 #include "../libraries/FaceDetector/facedetector.hpp"
 #include "../libraries/debug/debug.h"
+#include "../libraries/color_detector/color_detector.h"
 
 #include <iostream>
 #include <cstdlib>
@@ -12,10 +13,8 @@
 #include <opencv2/opencv.hpp>
 
 
-//-- Can color definitions
-static const int RED_CAN = 0;
-static const int BLUE_CAN = 1;
-static const int GREEN_CAN = 2;
+
+
 
 //-- Min error to stop tracking:
 static const int THRESH_X = 20;
@@ -146,6 +145,8 @@ int main(int argc, char ** argv)
     {
         //-- Loop to track targets
         //---------------------------------------------------------------------------------------
+        int error_x = 600, error_y = 600;
+
         do
         {
             //-- Get image from webcam
@@ -156,32 +157,34 @@ int main(int argc, char ** argv)
             /*
              * ***** HERE IS WHERE TARGET IS EXTRACTED
              */
+            std::vector<cv::Point> targets = getTarget(0, frame);
 
-            //-- calculate center of bounding box
-            int center_x = faces[0].x + faces[0].width / 2;
-            int center_y = faces[0].y + faces[0].height / 2;
+            if (targets.size() > 0)
+            {
+                cv::Point target = targets[0];
 
-            //-- Calculate error
-            int error_x = frame.cols / 2 - center_x;
-            int error_y = frame.rows / 2 - center_y;
+                //-- Calculate error
+                error_x = frame.cols / 2 - target.x;
+                error_y = frame.rows / 2 - target.y;
 
-            std::cout << "--------------DEBUG--------------------------------" << std::endl;
-            std::cout << "Error x: " << error_x << std::endl;
-            std::cout << "Error y: " << error_y << std::endl;
+                std::cout << "--------------DEBUG--------------------------------" << std::endl;
+                std::cout << "Error x: " << error_x << std::endl;
+                std::cout << "Error y: " << error_y << std::endl;
 
-            //-- P controller
-            int move_x = error_x * kpx;
-            int move_y = - error_y * kpy;
+                //-- P controller
+                int move_x = - error_x * kpx;
+                int move_y = - error_y * kpy;
 
-            //-- Command motors
-            myTurret.movePanInc(move_x);
-            myTurret.moveTiltInc(move_y);
+                //-- Command motors
+                myTurret.movePanInc(move_x);
+                myTurret.moveTiltInc(move_y);
 
-            //-- Plotting target to have feedback
-            cv::rectangle(frame, faces[0], cv::Scalar(0, 0, 255));
-            cv::circle(frame, cv::Point(center_x, center_y ), 2, cv::Scalar(0, 0, 255), 2);
+                //-- Plotting target to have feedback
+                //cv::rectangle(frame, faces[0], cv::Scalar(0, 0, 255));
+                //cv::circle(frame, cv::Point(center_x, center_y ), 2, cv::Scalar(0, 0, 255), 2);
+                cv::circle(frame, target, 3, cv::Scalar(255, 0, 0), 2);
 
-
+            }
             //-- This is the scope (substitute it by another thing if needed)
             cv::circle(frame, cv::Point(frame.cols / 2, frame.rows / 2 ), 2, cv::Scalar(255, 0, 0), 2);
 
@@ -191,7 +194,7 @@ int main(int argc, char ** argv)
             if ( key == 27 || key == 'q' )
                 return 0;
 
-        } while (error_x > THRESH_X || error_y > THRESH_Y );
+        } while (abs(error_x) > THRESH_X || abs(error_y) > THRESH_Y );
 
 
         //-- Safety loop: (Extract faces)
@@ -205,7 +208,15 @@ int main(int argc, char ** argv)
 
             faces = faceDetector.detect(frame);
 
+            if (faces.size() == 0)
+                break;
+
             std::cout << "Face detected!! Waiting to shoot..." << std::endl;
+
+            //-- calculate center of bounding box
+            int center_x = faces[0].x + faces[0].width / 2;
+            int center_y = faces[0].y + faces[0].height / 2;
+
 
             //-- Plotting
             cv::rectangle(frame, faces[0], cv::Scalar(0, 0, 255));
@@ -224,6 +235,7 @@ int main(int argc, char ** argv)
         //---------------------------------------------------------------------------------------------
         myTurret.shoot();
         std::cout << "Target \"" << can_ids.at(i) << "\" was shot down!" << std::endl;
+        yarp::os::Time::delay(1);
     }
 
     myTurret.destroy();

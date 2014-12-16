@@ -40,8 +40,8 @@ int main(int argc, char ** argv)
     }
 
     //-- P controller params
-    float kpx = 0.01;
-    float kpy = 0.01;
+    float kpx = 0.02;
+    float kpy = 0.02;
 
     //-- Control loop goes here
     do
@@ -68,7 +68,7 @@ int main(int argc, char ** argv)
             std::cout << "Error y: " << error_y << std::endl;
 
             //-- P controller
-            int move_x = error_x * kpx;
+            int move_x = - error_x * kpx;
             int move_y = - error_y * kpy;
 
             //-- Command motors

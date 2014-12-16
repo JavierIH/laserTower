@@ -9,7 +9,7 @@ link_directories(${RD_LINK_DIRS})
 OPTION(APP_YES_WE_CAN "App for controlling the turret and shooting down cans" 1)
 IF (APP_YES_WE_CAN)
 add_executable(yes_we_can yes_we_can.cpp)
-target_link_libraries(yes_we_can Turret FaceDetector ${YARP_LIBRARIES} ${OpenCV_LIBS} ${RD_LIBRARIES})
+target_link_libraries(yes_we_can Turret FaceDetector color_detector ${YARP_LIBRARIES} ${OpenCV_LIBS} ${RD_LIBRARIES})
 ENDIF ()
 
 ### ESTRUCTURA PARA ANADIR APPS
