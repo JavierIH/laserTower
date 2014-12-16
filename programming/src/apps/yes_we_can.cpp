@@ -129,8 +129,8 @@ int main(int argc, char ** argv)
 
     //-- Setup P controller params
     //-----------------------------------------------------------------------
-    float kpx = 0.02;
-    float kpy = 0.02;
+    float kpx = 0.01;
+    float kpy = 0.01;
 
 
     /**********************************************************************
@@ -141,7 +141,7 @@ int main(int argc, char ** argv)
      * *******************************************************************/
 
     //-- For each target
-    for (int i = 0; i < can_ids.size(); i++)
+    for (int i = 0; i < 2; i++ )//can_ids.size(); i++)
     {
         //-- Loop to track targets
         //---------------------------------------------------------------------------------------
@@ -157,7 +157,7 @@ int main(int argc, char ** argv)
             /*
              * ***** HERE IS WHERE TARGET IS EXTRACTED
              */
-            std::vector<cv::Point> targets = getTarget(0, frame);
+            std::vector<cv::Point> targets = getTarget(i, frame);
 
             if (targets.size() > 0)
             {
@@ -182,7 +182,7 @@ int main(int argc, char ** argv)
                 //-- Plotting target to have feedback
                 //cv::rectangle(frame, faces[0], cv::Scalar(0, 0, 255));
                 //cv::circle(frame, cv::Point(center_x, center_y ), 2, cv::Scalar(0, 0, 255), 2);
-                cv::circle(frame, target, 3, cv::Scalar(255, 0, 0), 2);
+                cv::circle(frame, target, 3, cv::Scalar(0, 255, 0), 2);
 
             }
             //-- This is the scope (substitute it by another thing if needed)
@@ -234,10 +234,11 @@ int main(int argc, char ** argv)
         //-- All is clear: shoot!!
         //---------------------------------------------------------------------------------------------
         myTurret.shoot();
-        std::cout << "Target \"" << can_ids.at(i) << "\" was shot down!" << std::endl;
-        yarp::os::Time::delay(1);
+        //std::cout << "Target \"" << can_ids.at(i) << "\" was shot down!" << std::endl;
+
     }
 
+    yarp::os::Time::delay(3);
     myTurret.destroy();
     yarp::os::Network::fini();
 
