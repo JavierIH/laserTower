@@ -12,7 +12,6 @@ void old_test(){
         Mat image=camera.getFrame();
         imshow("Original",image);
 
-
         Mat detection=detectColorRGB("red",image);
         //imshow("Color rojo",detection);
 

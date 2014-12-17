@@ -16,10 +16,14 @@ cv::Mat detectColorRGB(std::string, cv::Mat);
 cv::Mat detectColorRGB(int, cv::Mat);
 cv::Mat1b dilation(cv::Mat1b,int);
 cv::Mat detectColorHSV(std::string, cv::Mat);
-
+cv::Mat detectColorHSV(int color, cv::Mat);
 
 std::vector<cv::Point> getTarget(std::string, cv::Mat);
 std::vector<cv::Point> getTarget(int, cv::Mat);
+std::vector<cv::Point> getTargetHSV(std::string , cv::Mat);
+std::vector<cv::Point> getTargetHSV(int, cv::Mat);
+
+
 
 
 #endif // RGB_DETECTOR_H

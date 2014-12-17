@@ -7,14 +7,21 @@ using namespace cv;
 int main()
 {
 
-    Webcam camera(-1);
+   Webcam camera(-1);
 
+   /*Mat image = imread("/home/roberto/laserTower/programming/src/test/fotos/arcoiris.png");
+    if(! image.data )                              // Check for invalid input
+        {
+            cout <<  "Could not open or find the image" << std::endl ;
+            return 1;
+        }
+    */
     while(1){
         Mat image=camera.getFrame();
+
         imshow("Original",image);
-        imshow("Color azul",detectColorHSV("blue",image));
-        imshow("Color verde",detectColorHSV("green",image));
-        imshow("Color rojo",detectColorHSV("red",image));
+        imshow("Color azul HSV",detectColorHSV("blue",image));
+        imshow("Color azul RGB",detectColorRGB("blue",image));
 
         if (waitKey(30) == 27) break;
     }

@@ -12,6 +12,12 @@ add_executable(yes_we_can yes_we_can.cpp)
 target_link_libraries(yes_we_can Turret FaceDetector color_detector ${YARP_LIBRARIES} ${OpenCV_LIBS} ${RD_LIBRARIES})
 ENDIF ()
 
+OPTION(APP_YES_WE_CAN_HSV "App for controlling the turret and shooting down cans in HSV colorspace" 1)
+IF (APP_YES_WE_CAN_HSV)
+add_executable(yes_we_can_hsv yes_we_can_hsv.cpp)
+target_link_libraries(yes_we_can_hsv Turret FaceDetector color_detector ${YARP_LIBRARIES} ${OpenCV_LIBS} ${RD_LIBRARIES})
+ENDIF ()
+
 ### ESTRUCTURA PARA ANADIR APPS
 #OPTION(VARIABLE "<descripcion>" 1)
 #IF (VARIABLE)
