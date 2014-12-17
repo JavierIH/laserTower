@@ -23,6 +23,8 @@ class Turret
         void moveTiltInc(float angle_increment);
         void movePanInc(float angle_increment);
 
+        void seek();
+
         bool shoot();
         bool testLED();
 

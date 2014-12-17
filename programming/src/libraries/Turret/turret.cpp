@@ -193,3 +193,21 @@ bool Turret::sendJoints()
     double joints[] = {angle_tilt, angle_pan};
     return position_controller->positionMove(joints);
 }
+
+void Turret::seek()
+{
+    static float incPAN = 15;
+    static float incTILT = 15;
+
+    if((angle_pan + incPAN)>=LIMIT_PAN_MAX || (angle_pan + incPAN)<=LIMIT_PAN_MIN){
+        incPAN = - incPAN;
+        if((angle_tilt + incTILT)>=LIMIT_TILT_MAX || (angle_tilt + incTILT)<=LIMIT_TILT_MIN){
+            incTILT = -incTILT;
+        }
+        moveTiltInc(incTILT);
+
+    }else{
+        movePanInc(incPAN);
+    }
+
+}

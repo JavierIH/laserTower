@@ -184,6 +184,8 @@ int main(int argc, char ** argv)
                 //cv::circle(frame, cv::Point(center_x, center_y ), 2, cv::Scalar(0, 0, 255), 2);
                 cv::circle(frame, target, 3, cv::Scalar(255, 0, 0), 2);
 
+            }else{
+                myTurret.seek(); //Seek new targets
             }
             //-- This is the scope (substitute it by another thing if needed)
             cv::circle(frame, cv::Point(frame.cols / 2, frame.rows / 2 ), 2, cv::Scalar(255, 0, 0), 2);
