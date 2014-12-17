@@ -31,6 +31,28 @@ void printUsage()
 
 }
 
+bool isInsideRect(cv::Point point, cv::Rect rectangle)
+{
+    if (point.x >= rectangle.x &&
+        point.x <= rectangle.x + rectangle.width &&
+        point.y >= rectangle.y &&
+        point.y <= rectangle.y + rectangle.height)
+        return true;
+    else
+        return false;
+}
+
+cv::Rect scaleRect(cv::Rect rectangle, double scale_factor)
+{
+    int center_x = rectangle.x + rectangle.width / 2;
+    int center_y = rectangle.y + rectangle.height /2;
+
+    return cv::Rect(center_x - scale_factor * rectangle.width / 2,
+                    center_y - scale_factor * rectangle.height / 2,
+                    scale_factor * rectangle.width,
+                    scale_factor * rectangle.height);
+}
+
 int main(int argc, char ** argv)
 {
 
@@ -146,9 +168,11 @@ int main(int argc, char ** argv)
         //-- Loop to track targets
         //---------------------------------------------------------------------------------------
         int error_x = 600, error_y = 600;
-
+        bool target_found;
         do
         {
+            target_found = false;
+
             //-- Get image from webcam
             cv::Mat frame;
             capture.read(frame);
@@ -157,19 +181,20 @@ int main(int argc, char ** argv)
             /*
              * ***** HERE IS WHERE TARGET IS EXTRACTED
              */
-            std::vector<cv::Rect> rects = getTarget(can_ids[i], frame);
-            std::vector<cv::Point> targets;
+            std::vector<cv::Rect> target_bboxes = getTarget(can_ids[i], frame);
 
-            for(int i=0;i<rects.size();i++){
-                cv::Point center;
-                center.x=rects.at(i).x+rects.at(i).width/2;
-                center.y=rects.at(i).y+rects.at(i).height/2;
-                targets.push_back(center);
-            }
-
-            if (targets.size() > 0)
+            if (target_bboxes.size() > 0)
             {
-                cv::Point target = targets[0];
+                target_found = true;
+
+                //-- Get center:
+                cv::Rect target_box = target_bboxes[0];
+                cv::Rect scaled_target_box = scaleRect(target_box, 0.80);
+
+                cv::Point target;
+                target.x=target_box.x + target_box.width/2;
+                target.y=target_box.y + target_box.height/2;
+
 
                 //-- Calculate error
                 error_x = frame.cols / 2 - target.x;
@@ -188,9 +213,12 @@ int main(int argc, char ** argv)
                 myTurret.moveTiltInc(move_y);
 
                 //-- Plotting target to have feedback
-                //cv::rectangle(frame, faces[0], cv::Scalar(0, 0, 255));
-                //cv::circle(frame, cv::Point(center_x, center_y ), 2, cv::Scalar(0, 0, 255), 2);
                 cv::circle(frame, target, 3, cv::Scalar(0, 255, 0), 2);
+                cv::rectangle(frame, scaled_target_box, cv::Scalar(0, 0, 255));
+
+                //-- Finish if we get to the target
+                if ( isInsideRect(target, scaled_target_box))
+                    break;
 
             }
             //-- This is the scope (substitute it by another thing if needed)
@@ -202,7 +230,7 @@ int main(int argc, char ** argv)
             if ( key == 27 || key == 'q' )
                 return 0;
 
-        } while (abs(error_x) > THRESH_X || abs(error_y) > THRESH_Y );
+        } while ( abs(error_x) > THRESH_X && abs(error_y) > THRESH_Y );
 
 
         //-- Safety loop: (Extract faces)
