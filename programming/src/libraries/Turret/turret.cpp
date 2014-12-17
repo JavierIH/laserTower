@@ -196,7 +196,7 @@ bool Turret::sendJoints()
 
 void Turret::seek()
 {
-    static float incPAN = 15;
+    static float incPAN = 1.5;
     static float incTILT = 15;
 
     if((angle_pan + incPAN)>=LIMIT_PAN_MAX || (angle_pan + incPAN)<=LIMIT_PAN_MIN){

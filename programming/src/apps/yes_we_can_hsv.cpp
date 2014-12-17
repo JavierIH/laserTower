@@ -63,7 +63,7 @@ int main(int argc, char ** argv)
     {
         std::cerr << "ERROR: no can sequence was specified!" << std::endl;
         printUsage();
-        return 1;
+        return 2;
     }
 
     std::string can_list =  resourceFinder.find("cans").asString();
@@ -99,7 +99,7 @@ int main(int argc, char ** argv)
     if (!myTurret.start())
     {
         std::cerr << "[Test] Not able to connect!" << std::endl;
-        return 1;
+        return 3;
     }
 
     std::cout << "Turret is now connected" << std::endl;
@@ -123,7 +123,7 @@ int main(int argc, char ** argv)
     if(!capture.isOpened())
     {
         report(ERROR,"Camera failed at opening");
-        return 1;
+        return 4;
     }
 
 

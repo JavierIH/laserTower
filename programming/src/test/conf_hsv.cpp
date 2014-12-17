@@ -47,7 +47,7 @@ using namespace std;
              cout << "Cannot read a frame from video stream" << endl;
              break;
         }
-         imgOriginal = imread("/home/roberto/laserTower/programming/src/test/fotos/3cervezas.jpg");
+         //imgOriginal = imread("/home/roberto/laserTower/programming/src/test/fotos/hsv.jpg");
          Mat imgHSV;
 
         cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
