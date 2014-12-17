@@ -172,7 +172,8 @@ int main(int argc, char ** argv)
                 std::cout << "Error y: " << error_y << std::endl;
 
                 //-- P controller
-                int move_x = - error_x * kpx;
+                //int move_x = - error_x * kpx; //-- For turret
+                int move_x = error_x * kpx; //-- For minoru
                 int move_y = - error_y * kpy;
 
                 //-- Command motors
