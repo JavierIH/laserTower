@@ -17,8 +17,8 @@
 
 
 //-- Min error to stop tracking:
-static const int THRESH_X = 20;
-static const int THRESH_Y = 20;
+static const int THRESH_X = 50;
+static const int THRESH_Y = 50;
 
 void printUsage()
 {
@@ -151,9 +151,8 @@ int main(int argc, char ** argv)
 
     //-- Setup P controller params
     //-----------------------------------------------------------------------
-    float kpx = 0.01;
-    float kpy = 0.01;
-
+    float kpx = 0.015;
+    float kpy = 0.015;
 
     /**********************************************************************
      * Program itself
@@ -161,7 +160,6 @@ int main(int argc, char ** argv)
      * This block is the program
      *
      * *******************************************************************/
-
     //-- For each target
     for (int i = 0; i < can_ids.size(); i++)
     {
@@ -189,7 +187,7 @@ int main(int argc, char ** argv)
 
                 //-- Get center:
                 cv::Rect target_box = target_bboxes[0];
-                cv::Rect scaled_target_box = scaleRect(target_box, 0.80);
+                cv::Rect scaled_target_box = scaleRect(target_box, 1);
 
                 cv::Point target;
                 target.x=target_box.x + target_box.width/2;
@@ -217,12 +215,12 @@ int main(int argc, char ** argv)
                 cv::rectangle(frame, scaled_target_box, cv::Scalar(0, 0, 255));
 
                 //-- Finish if we get to the target
-                if ( isInsideRect(target, scaled_target_box))
+                if ( isInsideRect(cv::Point(frame.cols / 2, frame.rows / 2 ), scaled_target_box))
                     break;
 
             }
             //-- This is the scope (substitute it by another thing if needed)
-            cv::circle(frame, cv::Point(frame.cols / 2, frame.rows / 2 ), 2, cv::Scalar(255, 0, 0), 2);
+            cv::circle(frame, cv::Point(frame.cols / 2, frame.rows / 2 ), 10, cv::Scalar(255, 0, 0), 2);
 
             //-- Show on screen things
             cv::imshow("out", frame);
@@ -230,7 +228,7 @@ int main(int argc, char ** argv)
             if ( key == 27 || key == 'q' )
                 return 0;
 
-        } while ( abs(error_x) > THRESH_X && abs(error_y) > THRESH_Y );
+        } while ( abs(error_x) > THRESH_X || abs(error_y) > THRESH_Y );
 
 
         //-- Safety loop: (Extract faces)

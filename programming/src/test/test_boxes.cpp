@@ -15,7 +15,7 @@ void old_test(){
 
 
         Mat detection=detectColorRGB("red",image);
-        //imshow("Color rojo",detection);
+        imshow("Color rojo",detection*2);
 
         Mat1b thresh;
         threshold(detection,thresh,100,255,THRESH_BINARY);
@@ -72,7 +72,7 @@ void old_test(){
 int main()
 {
 
-    Webcam camera(-1);
+    Webcam camera(1);
 
     while(1){
         Mat image=camera.getFrame();
@@ -80,7 +80,7 @@ int main()
         vector<Rect> rects;
         rects=getTarget("red",image);
         report(INFO,"Objetivos: "+to_string(rects));
-        if (waitKey(10) == 27) break;
+        if (waitKey(30) == 27) break;
     }
 }
 

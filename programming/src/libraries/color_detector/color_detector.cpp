@@ -86,15 +86,19 @@ vector<Rect> getTarget(std::string color, Mat image){
 
 vector<Rect> getTarget(int color, Mat image){
 
-    Mat detection=detectColorRGB(color,image);
+    Mat detection=detectColorRGB(color,image)*2;
+
+    cv::medianBlur(detection,detection,3);
+
+    imshow("detection",detection);
 
     Mat1b thresh;
-    threshold(detection,thresh,150,255,THRESH_BINARY);
+    threshold(detection,thresh,170,255,THRESH_BINARY);
 
-    thresh=dilation(thresh,-20);
-    thresh=dilation(thresh,20);
+    thresh=dilation(thresh,-5);
+    thresh=dilation(thresh,5);
 
-    //imshow("Threshold",thresh);
+    imshow("Threshold",thresh);
 
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
@@ -110,7 +114,7 @@ vector<Rect> getTarget(int color, Mat image){
 
     //Mat drawing = Mat::zeros( thresh.size(), CV_8UC3 );
 
-    int min_area=10000;
+    int min_area=100;
     int max_area=60000;
     vector<Point> target;
     if(!contours.empty()){
