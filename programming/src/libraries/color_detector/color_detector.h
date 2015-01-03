@@ -16,8 +16,8 @@ cv::Mat detectColorRGB(std::string, cv::Mat);
 cv::Mat detectColorRGB(int, cv::Mat);
 cv::Mat1b dilation(cv::Mat1b,int);
 
-std::vector<cv::Point> getTarget(std::string, cv::Mat);
-std::vector<cv::Point> getTarget(int, cv::Mat);
+std::vector<cv::Rect> getTarget(std::string, cv::Mat);
+std::vector<cv::Rect> getTarget(int, cv::Mat);
 
 
 #endif // RGB_DETECTOR_H

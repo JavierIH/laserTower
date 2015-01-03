@@ -1,3 +1,4 @@
+
 #include "../libraries/debug/debug.h"
 #include "../libraries/webcam/webcam.h"
 #include "../libraries/color_detector/color_detector.h"
@@ -14,7 +15,7 @@ void old_test(){
 
 
         Mat detection=detectColorRGB("red",image);
-        //imshow("Color rojo",detection);
+        imshow("Color rojo",detection*2);
 
         Mat1b thresh;
         threshold(detection,thresh,100,255,THRESH_BINARY);
@@ -71,15 +72,15 @@ void old_test(){
 int main()
 {
 
-    Webcam camera(-1);
+    Webcam camera(1);
 
     while(1){
         Mat image=camera.getFrame();
         imshow("Original",image);
-        vector<Point> target;
-        target=getTarget("red",image);
-        report(INFO,"Objetivos: "+to_string(target));
-        if (waitKey(10) == 27) break;
+        vector<Rect> rects;
+        rects=getTarget("red",image);
+        report(INFO,"Objetivos: "+to_string(rects));
+        if (waitKey(30) == 27) break;
     }
 }
 
