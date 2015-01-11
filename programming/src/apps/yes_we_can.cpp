@@ -13,9 +13,6 @@
 #include <opencv2/opencv.hpp>
 
 
-
-
-
 //-- Min error to stop tracking:
 static const int THRESH_X = 50;
 static const int THRESH_Y = 50;
@@ -31,6 +28,9 @@ void printUsage()
 
 }
 
+
+//-- Utils:
+//------------------------------------------------------------------------------
 bool isInsideRect(cv::Point point, cv::Rect rectangle)
 {
     if (point.x >= rectangle.x &&
@@ -53,6 +53,52 @@ cv::Rect scaleRect(cv::Rect rectangle, double scale_factor)
                     scale_factor * rectangle.height);
 }
 
+//-- Kalman Filter utils:
+//-----------------------------------------------------------------------------
+bool initKalman(cv::KalmanFilter& kalmanFilter, cv::Point init_point)
+{
+    //-- Create filter:
+    kalmanFilter.init( 4, 2, 0);
+    kalmanFilter.transitionMatrix = *( cv::Mat_<float>(4, 4) << 1, 0, 1, 0,
+                                0, 1, 0, 1,
+                                0, 0, 1, 0,
+                                0, 0, 0, 1);
+
+    //-- Initial state:
+    kalmanFilter.statePre.at<float>(0) = init_point.x;  //-- x Position
+    kalmanFilter.statePre.at<float>(1) = init_point.y; //-- y Position
+    kalmanFilter.statePre.at<float>(2) = 0;		     //-- x Velocity
+    kalmanFilter.statePre.at<float>(3) = 0;		     //-- y Velocity
+
+    //-- Set the rest of the matrices:
+    cv::setIdentity( kalmanFilter.measurementMatrix );
+    cv::setIdentity( kalmanFilter.processNoiseCov, cv::Scalar::all(0.0001));
+    cv::setIdentity( kalmanFilter.measurementNoiseCov, cv::Scalar::all(0.1));
+    cv::setIdentity( kalmanFilter.errorCovPost, cv::Scalar::all(0.1));
+}
+
+cv::Point kalmanPredictAndCorrect(cv::KalmanFilter& kalmanFilter, cv::Point& measured_point)
+{
+    //-- Predict next center position with kalman filter:
+    cv::Mat prediction = kalmanFilter.predict();
+    cv::Point prediction_point = cv::Point( prediction.at<float>(0), prediction.at<float>(1) );
+
+    //-- Create matrix for storing the measurement
+    cv::Mat_<float> measurement(2, 1);
+    measurement(0) = measured_point.x;
+    measurement(1) = measured_point.y;
+
+    //-- Correct estimation:
+    cv::Mat estimation = kalmanFilter.correct(measurement);
+    cv::Point estimation_point = cv::Point( estimation.at<float>(0), estimation.at<float>(1) );
+
+    return estimation_point;
+}
+
+
+//------------------------------------------------------------------------------------------------//
+//------------- MAIN -----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------------------------//
 int main(int argc, char ** argv)
 {
 
@@ -154,6 +200,12 @@ int main(int argc, char ** argv)
     float kpx = 0.015;
     float kpy = 0.015;
 
+
+    //-- Create kalman filter
+    //-----------------------------------------------------------------------
+    cv::KalmanFilter kalmanFilter;
+    bool kalmanInitialized = false;
+
     /**********************************************************************
      * Program itself
      * ********************************************************************
@@ -163,6 +215,9 @@ int main(int argc, char ** argv)
     //-- For each target
     for (int i = 0; i < can_ids.size(); i++)
     {
+        //-- Reset kalman
+        kalmanInitialized = false;
+
         //-- Loop to track targets
         //---------------------------------------------------------------------------------------
         int error_x = 600, error_y = 600;
@@ -193,10 +248,22 @@ int main(int argc, char ** argv)
                 target.x=target_box.x + target_box.width/2;
                 target.y=target_box.y + target_box.height/2;
 
+                //-- Use kalman filter
+                cv::Point filtered_target;
+                if ( !kalmanInitialized )
+                {
+                    initKalman(kalmanFilter, target);
+                    kalmanInitialized = true;
+                    filtered_target = target;
+                }
+                else
+                {
+                    filtered_target = kalmanPredictAndCorrect(kalmanFilter, target);
+                }
 
                 //-- Calculate error
-                error_x = frame.cols / 2 - target.x;
-                error_y = frame.rows / 2 - target.y;
+                error_x = frame.cols / 2 - filtered_target.x;
+                error_y = frame.rows / 2 - filtered_target.y;
 
                 std::cout << "--------------DEBUG--------------------------------" << std::endl;
                 std::cout << "Error x: " << error_x << std::endl;
@@ -213,6 +280,7 @@ int main(int argc, char ** argv)
 
                 //-- Plotting target to have feedback
                 cv::circle(frame, target, 3, cv::Scalar(0, 255, 0), 2);
+                cv::circle(frame, filtered_target, 3, cv::Scalar(255, 0, 0), 2);
                 cv::rectangle(frame, scaled_target_box, cv::Scalar(0, 0, 255));
 
                 //-- Finish if we get to the target
