@@ -1,0 +1,80 @@
+\documentclass{article}
+
+
+% General imports:
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}	% For using icelandic Thorn character
+\usepackage{amsmath}
+\usepackage{graphicx}
+
+% Support for spanish:
+\usepackage[spanish]{babel}
+
+% Imports for images
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{wrapfig}
+
+% Imports for euro symbol support
+\usepackage[official]{eurosym}
+\DeclareUnicodeCharacter{20AC}{\euro{}}
+
+% Other imports:
+\usepackage{indentfirst} % Indent first paragraph
+\usepackage[nottoc,numbib]{tocbibind} % Add bibliography to table of contents
+\usepackage{url}	% Cite URLs
+
+% Formatting margins of the pages:
+\usepackage[top=2.5cm, bottom=2.4cm, left=2.5cm, right=2.5cm]{geometry}
+
+% Import for headers
+\usepackage{fancyhdr}
+
+\lhead{}
+\chead{}
+\rhead{}
+\pagestyle{empty}
+
+% Definitions of important data
+\renewcommand{\author}{Javier Isabel Hernández\\David Estévez Fernández\\Roberto Herrera Esteban}
+\renewcommand{\title}{Visual Servoing para el control automático de una torreta}
+\newcommand{\department}{Máster Universitario en Robótica y Automatización\\Procesado de Imágenes por Computador}
+\newcommand{\teacher}{}
+
+
+
+% Each chapter will have its own header
+%\newcommand{\headchapter}[1]{\chapter{#1}\rhead{#1}}
+
+% Each section will have its own header
+%\newcommand{\headsection}[1]{\section{#1}}\rhead{#1}}
+
+% Change 'Chapter' to something more logical
+%\renewcommand{\chaptername}{}
+
+
+\begin{document}
+
+%%%% FRONTPAGE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\include{frontpage}
+\frontpage{\department}{\title}{\author}
+
+%%%%%%Table of contents%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tableofcontents
+\newpage
+
+% Adding some header text on top of the page:
+\lhead{}
+\chead{}
+\rhead{\title}
+\pagestyle{fancy}
+
+%%%% Different Sections %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{contents}
+
+%%%% Bibliography %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\newpage
+%\bibliographystyle{plain}
+%\bibliography{}
+
+\end{document}
