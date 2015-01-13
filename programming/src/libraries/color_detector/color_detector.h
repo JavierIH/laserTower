@@ -24,6 +24,9 @@ std::vector<cv::Point> getTargetHSV(std::string , cv::Mat);
 std::vector<cv::Point> getTargetHSV(int, cv::Mat);
 
 
+std::vector<cv::Rect> getTarget(std::string, cv::Mat);
+std::vector<cv::Rect> getTarget(int, cv::Mat);
+
 
 
 #endif // RGB_DETECTOR_H

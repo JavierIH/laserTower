@@ -5,7 +5,10 @@
 using namespace cv;
 using namespace std;
 
- int main( int argc, char** argv )
+
+int main( int argc, char** argv )
+
+
  {
     VideoCapture cap(0); //capture the video from web cam
 
@@ -36,6 +39,7 @@ using namespace std;
     cvCreateTrackbar("LowV", "Control", &iLowV, 255);//Value (0 - 255)
     cvCreateTrackbar("HighV", "Control", &iHighV, 255);
 
+
     while (true)
     {
         Mat imgOriginal;
@@ -47,7 +51,7 @@ using namespace std;
              cout << "Cannot read a frame from video stream" << endl;
              break;
         }
-         //imgOriginal = imread("/home/roberto/laserTower/programming/src/test/fotos/hsv.jpg");
+         imgOriginal = imread("/home/roberto/laserTower/programming/src/test/fotos/hsv_1.jpg");
          Mat imgHSV;
 
         cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
@@ -69,6 +73,7 @@ using namespace std;
 
         if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
        {
+
             cout << "esc key is pressed by user" << endl;
             break;
        }
@@ -76,3 +81,4 @@ using namespace std;
 
    return 0;
 }
+

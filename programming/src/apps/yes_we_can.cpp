@@ -17,8 +17,8 @@
 
 
 //-- Min error to stop tracking:
-static const int THRESH_X = 20;
-static const int THRESH_Y = 20;
+static const int THRESH_X = 50;
+static const int THRESH_Y = 50;
 
 void printUsage()
 {
@@ -29,6 +29,28 @@ void printUsage()
     std::cout << "\t--camera [integer id] (camera to be used)" << std::endl;
     std::cout << "\t--cans [can id list] (sequence of cans to be shoot {as string}})" << std::endl << std::endl;
 
+}
+
+bool isInsideRect(cv::Point point, cv::Rect rectangle)
+{
+    if (point.x >= rectangle.x &&
+        point.x <= rectangle.x + rectangle.width &&
+        point.y >= rectangle.y &&
+        point.y <= rectangle.y + rectangle.height)
+        return true;
+    else
+        return false;
+}
+
+cv::Rect scaleRect(cv::Rect rectangle, double scale_factor)
+{
+    int center_x = rectangle.x + rectangle.width / 2;
+    int center_y = rectangle.y + rectangle.height /2;
+
+    return cv::Rect(center_x - scale_factor * rectangle.width / 2,
+                    center_y - scale_factor * rectangle.height / 2,
+                    scale_factor * rectangle.width,
+                    scale_factor * rectangle.height);
 }
 
 int main(int argc, char ** argv)
@@ -129,9 +151,8 @@ int main(int argc, char ** argv)
 
     //-- Setup P controller params
     //-----------------------------------------------------------------------
-    float kpx = 0.02;
-    float kpy = 0.02;
-
+    float kpx = 0.015;
+    float kpy = 0.015;
 
     /**********************************************************************
      * Program itself
@@ -139,16 +160,17 @@ int main(int argc, char ** argv)
      * This block is the program
      *
      * *******************************************************************/
-
     //-- For each target
     for (int i = 0; i < can_ids.size(); i++)
     {
         //-- Loop to track targets
         //---------------------------------------------------------------------------------------
         int error_x = 600, error_y = 600;
-
+        bool target_found;
         do
         {
+            target_found = false;
+
             //-- Get image from webcam
             cv::Mat frame;
             capture.read(frame);
@@ -157,11 +179,20 @@ int main(int argc, char ** argv)
             /*
              * ***** HERE IS WHERE TARGET IS EXTRACTED
              */
-            std::vector<cv::Point> targets = getTarget(0, frame);
+            std::vector<cv::Rect> target_bboxes = getTarget(can_ids[i], frame);
 
-            if (targets.size() > 0)
+            if (target_bboxes.size() > 0)
             {
-                cv::Point target = targets[0];
+                target_found = true;
+
+                //-- Get center:
+                cv::Rect target_box = target_bboxes[0];
+                cv::Rect scaled_target_box = scaleRect(target_box, 1);
+
+                cv::Point target;
+                target.x=target_box.x + target_box.width/2;
+                target.y=target_box.y + target_box.height/2;
+
 
                 //-- Calculate error
                 error_x = frame.cols / 2 - target.x;
@@ -172,7 +203,8 @@ int main(int argc, char ** argv)
                 std::cout << "Error y: " << error_y << std::endl;
 
                 //-- P controller
-                int move_x = - error_x * kpx;
+                //int move_x = - error_x * kpx; //-- For turret
+                int move_x = error_x * kpx; //-- For minoru
                 int move_y = - error_y * kpy;
 
                 //-- Command motors
@@ -180,15 +212,18 @@ int main(int argc, char ** argv)
                 myTurret.moveTiltInc(move_y);
 
                 //-- Plotting target to have feedback
-                //cv::rectangle(frame, faces[0], cv::Scalar(0, 0, 255));
-                //cv::circle(frame, cv::Point(center_x, center_y ), 2, cv::Scalar(0, 0, 255), 2);
-                cv::circle(frame, target, 3, cv::Scalar(255, 0, 0), 2);
+                cv::circle(frame, target, 3, cv::Scalar(0, 255, 0), 2);
+                cv::rectangle(frame, scaled_target_box, cv::Scalar(0, 0, 255));
+
+                //-- Finish if we get to the target
+                if ( isInsideRect(cv::Point(frame.cols / 2, frame.rows / 2 ), scaled_target_box))
+                    break;
 
             }else{
                 myTurret.seek(); //Seek new targets
             }
             //-- This is the scope (substitute it by another thing if needed)
-            cv::circle(frame, cv::Point(frame.cols / 2, frame.rows / 2 ), 2, cv::Scalar(255, 0, 0), 2);
+            cv::circle(frame, cv::Point(frame.cols / 2, frame.rows / 2 ), 10, cv::Scalar(255, 0, 0), 2);
 
             //-- Show on screen things
             cv::imshow("out", frame);
@@ -196,7 +231,7 @@ int main(int argc, char ** argv)
             if ( key == 27 || key == 'q' )
                 return 0;
 
-        } while (abs(error_x) > THRESH_X || abs(error_y) > THRESH_Y );
+        } while ( abs(error_x) > THRESH_X || abs(error_y) > THRESH_Y );
 
 
         //-- Safety loop: (Extract faces)
@@ -237,9 +272,10 @@ int main(int argc, char ** argv)
         //---------------------------------------------------------------------------------------------
         myTurret.shoot();
         std::cout << "Target \"" << can_ids.at(i) << "\" was shot down!" << std::endl;
-        yarp::os::Time::delay(1);
+
     }
 
+    yarp::os::Time::delay(3);
     myTurret.destroy();
     yarp::os::Network::fini();
 

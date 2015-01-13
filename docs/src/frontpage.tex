@@ -1,0 +1,31 @@
+\newcommand{\frontpage}[3]
+{
+\begin{center}
+\includegraphics[width=0.25\textwidth]{./images/uc3m.jpg}\\[2cm]
+\textsc{\LARGE Universidad Carlos III de Madrid}\\[0.5cm]
+\textsc{\Large #1}\\[3cm]
+
+
+% Title
+{\huge \bfseries{#2}\\[7cm]}
+
+
+% Author and supervisor
+\begin{minipage}{0.35\textwidth}
+\begin{flushleft} \large
+\emph{Autores:}\\
+#3\\
+\end{flushleft}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\end{flushright}\end{minipage}\vfill
+
+% Bottom of the page
+%{\large \today}
+
+\end{center}
+%
+\newpage
+%
+}
