@@ -119,9 +119,26 @@ Teniendo en cuenta esta restricciones, basta con centrarse en en definir en los 
 
 Para programar estos umbrales basta con emplear la función \textit{inRange()}, que permite binarizar una imagen donde los píxeles blancos corresponden a los que las valores de los tres canales que están dentro de los umbrales definidos para cada canal.\\
 
-De este modo, se puede obtener el color que deseemos de un modo sencillo. Por ejemplo, para obtener el color azul basta con definir los umbrales del canal H.\\
-
+De este modo, se puede obtener el color que deseemos de un modo sencillo. Por ejemplo, para obtener el color azul basta con definir los umbrales del canal H, como se puede ver en la figura \ref{azulhsv}.\\
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{images/azul.jpg}% 
+\caption{Detección del color azul en HSV.}
+\label{azulhsv}
+\end{figure}
+\FloatBarrier
 El color más difícil de obtener es el color rojo, ya que está dividido en los extremos del canal H. Para este color en concreto, es necesario repetir el proceso dos veces, una para valores bajos y otra para altos, y sumas ambos resultados. De este modo se obtendría las siguientes imágenes.\\
+
+\begin{figure}[h]
+\centering
+\subfigure[Valores bajos de H.]{\includegraphics[width=0.35\textwidth]{images/rojo1.jpg} }
+\subfigure[Valores altos de H.]{\includegraphics[width=0.35\textwidth]{images/rojo2.jpg} }
+\subfigure[Suma de los dos anteriores]{\includegraphics[width=0.7\textwidth]{images/rojo.jpg} }
+
+\caption{Detección del color rojo en HSV.}
+\label{azulhsv}
+\end{figure}
+\FloatBarrier
 
 Una vez se ha utilizado cualquiera de los dos métodos anteriores, se habrá obtenido una imagen binaria en la que el objetivo es blanco y el fondo es negro. En la figura \ref{binaria} puede observarse un ejemplo.\\
 
@@ -166,23 +183,20 @@ Al usar operaciones muy simples, con un bajo coste computacional, este método s
 \section{Resultados}
 Se ha conseguido implementar todos los objetivos propuestos. La torreta es capaz de localizar y disparar de forma virtual a los objetivos. El usuario puede definir el orden en la que la torreta dispare a los objetivos diferenciandolos por color.\\
 
+Para la realización de este trabajo se han utilizado conocimientos de diferentes ramas. En primer lugar, el uso de las librerías OpenCV y de varias de sus funciones. Se han utilizado dos espacios de color diferentes para obtener información del entorno de diferentes formas, y el resultado ha sido igual de bueno para ambos casos.\\
+
 La torreta presenta mucha inercia y no existe una pausa justo antes del disparo, por esto la torreta no se detiene en el centroide del objetivo durante unos instantes. Esto hace dar la impresión de que la torreta no acierta en el objetivo pasando simplemente a través él, pero realmente sí lo hace si se observa en la captura del fotograma en el que la torreta simula el disparo.\\
 
 El sistema de seguridad detiene el disparo de la torreta en el momento que encuentra una cara. 
 La torreta no disparará hasta que no deje de detectar en la imagen a la persona, pero seguirá recalculando el posicionamiento de los servos para apuntar al objetivo.\\
 
 La comunicación entre los diferentes elementos es estable, permitiendo un uso fluido y continuo del programa pudiendo repetirlo varias veces sin necesidad de reiniciar ningún dispositivo.\\
-TODO
-
-\newpage
-
-
-\section{Conclusiones}
-Para la realización de este trabajo se han utilizado conocimientos de diferentes ramas. En primer lugar, el uso de las librerías OpenCV y de varias de sus funciones. Se han utilizado dos espacios de color diferentes para obtener información del entorno de diferentes formas, y el resultado ha sido igual de bueno para ambos casos.\\
 
 Para la aplicación real, se ha diseñado las piezas para crear una torreta con dos grados de libertad y poder montar sobre ella una cámara. Además, para dotarla de movimiento controlado, se ha programado un microcontrolador que controla los servos y se comunica con el ordenador. La implementación y funcionalidad de los diferentes elementos del sistema ha sido un éxito.\\
 
-TODO(no me gusta, lo voy a modificar)\\
+Por lo tanto, se puede considerar que todos los objetivos propuestos al inicio del proyecto se han completado saticfactoriamente.\\
+
+
 
 \newpage
 
