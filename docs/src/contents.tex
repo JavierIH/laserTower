@@ -5,7 +5,7 @@ Se trata del control de una torreta para que apunte automáticamente a los objet
 
 La principal motivación de este proyecto fue el realizar un proyecto eminentemente práctico que incluye elementos físicos que se pudieran mover. De esta forma, podemos interactuar con el entorno y aumentar el rango de visión de nuestra cámara.\\
 
-Al poder colocar distintos dispositivos sobre la torreta, sus aplicaciones no están limitadas a defensa o seguridad, sino que también podría tener aplicaciones de ocio, extinción de incendios (mangueras auto-dirigidas al fuego), industriales ( examen de piezas industriales auto-dirigido), etc.\\
+Al poder colocar distintos dispositivos sobre la torreta, sus aplicaciones no están limitadas a defensa o seguridad, sino que también podría tener aplicaciones de ocio, extinción de incendios (mangueras auto-dirigidas al fuego), industriales (examen de piezas industriales auto-dirigido), etc.\\
 
 Los principales objetivos que los autores propusieron para este trabajo son:
 \begin{itemize}
@@ -19,23 +19,30 @@ Los principales objetivos que los autores propusieron para este trabajo son:
 
 \section{Hardware}
 
-El prototipo, representado en la figura TODO consta de cuatro elementos: un ordenador portátil, una webcam, una placa Arduino y una torreta móvil.\\
+El prototipo, representado en la figura \ref{prototipo} consta de cuatro elementos: un ordenador portátil, una webcam, una placa Arduino y una torreta móvil.\\
 
-asdfasdfasdfasdfas
-asdfasdfasdfasd
-asdfasffdsdffasf
-dasdfasdfasfasdfas
-fasdfasdfasdfasdfasdf      Simulación de foto de la torreta
-asdfasdfsadfasdfasdf
-asdfasdfsadfsadfasdf
-asdfasfdsadfasdfasdfasd
-fasdfasdfasdfasdfasdfasdfasf\\
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.35\textwidth]{images/prototipo}% 
+\caption{Prototipo realizado.}
+\label{prototipo}
+\end{figure}
+\FloatBarrier
 
-El diseño de la torreta se ha llevado a cabo por medio de programas de diseño CAD. OpenSCAD [ TODO cita] es un programa de diseño orientado a la creación de modelos tridimensionales mediante código. El sistema mecánico consiste en un montaje típico de pan-tilt, accionado mediante servomotores de grandes dimensiones. Sobre la zona móvil de la torreta se ha colocado una webcam. Las piezas diseñadas pueden encontrarse en el repositorio del proyecto [ TODO cita].\\
+El diseño de la torreta se ha llevado a cabo por medio de programas de diseño CAD como OpenSCAD. OpenSCAD 
+\footnote{http://www.openscad.org/} es un programa de diseño orientado a la creación de modelos tridimensionales mediante código. El sistema mecánico consiste en un montaje típico de pan-tilt, accionado mediante servomotores de grandes dimensiones. Sobre la zona móvil de la torreta se ha colocado una webcam. Las piezas diseñadas pueden encontrarse en el repositorio del proyecto\footnote{https://github.com/JavierIH/laserTower}.\\
 
 La fabricación de las piezas de ABS, se ha llevado a cabo mediante la utilización de una impresora 3D doméstica de bajo coste.\\
 
-En cuanto a la electrónica de control, se ha utilizado una placa Arduino para gestionar los movimientos de la torreta. Esta placa, se ha conectado al ordenador por USB. El sistema desarrollado sigue el esquema de la figura [TODO]\\
+En cuanto a la electrónica de control, se ha utilizado una placa Arduino para gestionar los movimientos de la torreta. Esta placa, se ha conectado al ordenador por USB. El sistema desarrollado sigue el esquema de la figura \ref{topologia}\\
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.85\textwidth]{images/topologia}% 
+\caption{Topología del sistema.}
+\label{topologia}
+\end{figure}
+\FloatBarrier
 
 \newpage
 
@@ -56,7 +63,15 @@ Por último, para la reproducción de sonidos que simulan el disparo de la torre
 
 \section{Algoritmo de Control}
 \subsection{Detección de objetivos}
-Para detectar las latas, se han realizado dos algoritmos diferentes: una basada en el espacio de color RGB y otra en el espacio HSV. Para observar los resultados de ambos algoritmos, se ha utilizado una imagen de prueba como la presentada en la figura TODO\\
+Para detectar las latas, se han realizado dos algoritmos diferentes: uno basado en el espacio de color RGB y otro en el espacio HSV. Para observar los resultados de ambos algoritmos, se ha utilizado una imagen de prueba como la presentada en la figura \ref{imagendeprueba}\\
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{images/imagendeprueba}% 
+\caption{Imagen de prueba}
+\label{imagendeprueba}
+\end{figure}
+\FloatBarrier
 
 El algoritmo de detección basado en RGB se lleva a cabo de la siguiente forma. En primer lugar, se separan los tres canales de la imagen (rojo, verde y azul) en tres imágenes monocanales. Tras esto, se recombinan los canales mediante sumas y restas para obtener las zonas de la imagen que contienen una mayor pureza de color. Por ejemplo, supongamos que queremos realizar una detección del color azul de una imagen. Se tomará como base el canal azul de la imagen y se hallarán las diferencias respecto al resto de componentes de la imagen, realizando la siguiente operación:
 
@@ -64,7 +79,15 @@ El algoritmo de detección basado en RGB se lleva a cabo de la siguiente forma. 
 
 Con este procedimiento, enfrentamos el color azul con el resto de colores de la imagen. Los resultados deben interpretarse como una medida de la pureza del color azul detectada. De este modo, colores que tengan una componente azul muy superior al resto de sus componentes presentarán mayor pureza que otros colores que tengan proporciones similares o superiores del resto de componentes de color frente al azul.\\
 
-Aplicando este algoritmo sobre nuestra imagen de control obtenemos el resultado que puede apreciarse en la figura TODO:\\
+Aplicando este algoritmo sobre nuestra imagen de control obtenemos el resultado que puede apreciarse en la figura \ref{rgbazul}\\
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{images/rgbazul}% 
+\caption{Detección de color azul en espacio RGB}
+\label{rgbazul}
+\end{figure}
+\FloatBarrier
 
 Una vez obtenido este resultado, podemos realizar una umbralización simple para obtener una imagen binaria que separe nuestro objetivo del entorno. Este método permite la conceptualización del color, no busca la detección de un matiz de color concreto, sino que obtiene como entrada un color (en este caso “azul”) y devuelve un conjunto borroso de colores cercanos a él.\\
 
@@ -72,7 +95,15 @@ Este método puede escalarse a colores no primarios, como por ejemplo el amarill
 
 \[(ROJO - AZUL) + (VERDE - AZUL) \]
 
-Y obtendríamos como resultado la imagen TODO\\
+Y obtendríamos como resultado la imagen \ref{rgbamarillo}\\
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.7\textwidth]{images/rgbamarillo}% 
+\caption{Detección de color amarillo en espacio RGB}
+\label{rgbamarillo}
+\end{figure}
+\FloatBarrier
 
 Sin embargo, es importante recalcar que la búsqueda de colores más complejos incrementa gradualmente la dificultad de los cálculos.\\
 
@@ -92,9 +123,17 @@ De este modo, se puede obtener el color que deseemos de un modo sencillo. Por ej
 
 El color más difícil de obtener es el color rojo, ya que está dividido en los extremos del canal H. Para este color en concreto, es necesario repetir el proceso dos veces, una para valores bajos y otra para altos, y sumas ambos resultados. De este modo se obtendría las siguientes imágenes.\\
 
-Una vez se ha utilizado cualquiera de los dos métodos anteriores, se habrá obtenido una imagen binaria en la que el objetivo es blanco y el fondo es negro. En la figura TODO puede observarse un ejemplo.\\
+Una vez se ha utilizado cualquiera de los dos métodos anteriores, se habrá obtenido una imagen binaria en la que el objetivo es blanco y el fondo es negro. En la figura \ref{binaria} puede observarse un ejemplo.\\
 
-Para extraer los datos de el cuerpo detectado, blablabla CANNY, blablabla BOUNDING BOX, blablabla RECT, blablabla PUNTO CENTRAL. (en 10 lineas +-)\\
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.9\textwidth]{images/binaria}% 
+\caption{Binarización de imagen sobre segmentación de color azul}
+\label{binaria}
+\end{figure}
+\FloatBarrier
+
+Para extraer los datos del objetivo detectado se ha relizado una detección de contornos. Sobre el contorno extraído y teniendo en cuenta que los objetivos a localizar son latas (es decir, objetivos rectangulares), se ha calculado el bounding box del cuerpo del objeto. Una vez hallado el rectágulo definido por el bounding box, utilizaremos las coordenadas de su centro como el objetivo de la torreta.
 
 \subsection{Visual Servoing}
 Tras obtener la posición dentro de la imagen del centroide del objeto, el siguiente paso es dirigir la cámara hacia el objeto. Al representar el centro de la imagen el punto en el que la torreta está apuntando, si se consigue central el objeto en la imagen observada la torreta estará apuntando al objeto. Una mirilla virtual es superpuesta a la imagen como indicador visual de este hecho.\\
