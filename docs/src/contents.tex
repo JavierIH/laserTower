@@ -117,15 +117,13 @@ Y obtendríamos como resultado la imagen \ref{rgbamarillo}\\
 
 Sin embargo, es importante recalcar que la búsqueda de colores más complejos incrementa gradualmente la dificultad de los cálculos.\\
 
-El espacio de color HSV también se basa en tres canales diferenciados, pero la codificación de la información es diferente al RGB. Estos tres canales son Hue, Saturation, Value (Matiz, Saturación, Valor). Para esta aplicación, y aprovechando la independencia a la iluminación que ofrece este espacio de color, el principal análisis se hará sobre el canal donde se almacena el color, Hue, dejando en segundo plano los otros dos canales, aunque también se tendrán en cuenta.\\
+El espacio de color HSV también se basa en tres canales diferenciados, pero la codificación de la información es diferente al RGB. Estos tres canales son Hue, Saturation, Value (Matiz o tono, Saturación, Valor). Para esta aplicación, y aprovechando la independencia a la iluminación que ofrece este espacio de color, el principal análisis se hará sobre el canal donde se almacena el color, Hue, dejando en segundo plano los otros dos canales, aunque también se tendrán en cuenta.\\
 
-En primer lugar, es necesario transformar la imagen de un espacio de color al otro para poder trabajar sobre HSV.  Para ello se usa la función de OpenCV cvtColor() con el código RGB2HSV. Una vez se haya convertido la imagen a HSV, se pueden separar los tres canales donde se almacena la información.\\
+En primer lugar, es necesario transformar la imagen de un espacio de color al otro para poder trabajar sobre HSV. Para ello se usa la función de OpenCV \textit{cvtColor()} con el código RGB2HSV. Una vez se haya convertido la imagen a HSV, se pueden separar los tres canales donde se almacena la información.\\
 
-Un inconveniente que presenta HSV son los problemas que surgen al declarar los niveles de gris de una imagen, ya que el canal H es independiente a esta información. En concreto para esta aplicación, los niveles de gris que más interfieren en el algoritmo son los grises muy próximos al blanco y al negro. La forma más sencilla es limitar estos niveles con los canales S y V, que representan en contenido de blanco de dicho color y la reflexión de la luz en el mismo.\\
+Para detectar el color no sólo se debe tener en cuenta el canal H, puesto que los colores gris, blanco y negro también poseen información en este canal y serían detectados como pixeles del color buscado. Para filtrar el gris, blanco y negro, se utilizan los canales restantes. El canal S nos da la saturación de un color. Por ello, si queremos descartar los grises, se ha de colocar un umbral mínimo a partir del cual se deja de encontrar gris en dicho canal. En los extremos del canal V, que representa la intensidad lumínica de los pixeles, se encentran los blancos y los negros. Por ello, para descartarlos se ha de filtrar un rango de valores que no incluya valores en los extremos. \\
 
-Para limitar el blanco y así evitar falsos positivos, basta con poner un límite inferior al canal S. Con este umbral, se asegura que el pixel tenga un contenido suficiente de color. Del mismo modo, se puede prescindir de los píxeles cercanos al negro declarando otro umbral para el canal V, que representa el rebote de la luz en el objeto. Un valor bajo en este canal significa que poca luz rebota, por lo que el color es muy cercano al negro.\\
-
-Teniendo en cuenta esta restricciones, basta con centrarse en en definir en los umbrales superior e inferior en el canal H. Con estos umbrales se podría seleccionar el color con el que se quiera trabajar, sin que interfiera mucho la iluminación del escenario u otros factores.\\
+Una vez filtrados los grises, blancos y negros, basta con centrarse en en definir en los umbrales superior e inferior en el canal H. Con estos umbrales se podría seleccionar el color con el que se quiera trabajar, sin que interfiera mucho la iluminación del escenario u otros factores.\\
 
 Para programar estos umbrales basta con emplear la función \textit{inRange()}, que permite binarizar una imagen donde los píxeles blancos corresponden a los que las valores de los tres canales que están dentro de los umbrales definidos para cada canal.\\
 
@@ -137,17 +135,17 @@ De este modo, se puede obtener el color que deseemos de un modo sencillo. Por ej
 \label{azulhsv}
 \end{figure}
 \FloatBarrier
-El color más difícil de obtener es el color rojo, ya que está dividido en los extremos del canal H. Para este color en concreto, es necesario repetir el proceso dos veces, una para valores bajos y otra para altos, y sumas ambos resultados. De este modo se obtendría las siguientes imágenes.\\
+El color más difícil de obtener es el color rojo, ya que está dividido en los extremos del canal H. Para este color en concreto, es necesario repetir el proceso dos veces, una para valores bajos y otra para altos, y aplicar una operación OR de ambas máscaras binarias. De este modo se obtendría las imágenes de la figura \ref{rojohsv}.\
 
 \begin{figure}[h]
 \centering
-\subfigure[Valores bajos de H.]{\includegraphics[width=0.35\textwidth]{images/rojo1.jpg} }
-\subfigure[Valores altos de H.]{\includegraphics[width=0.35\textwidth]{images/rojo2.jpg} }
-\subfigure[Suma de los dos anteriores]{\includegraphics[width=0.7\textwidth]{images/rojo.jpg} }
+\subfigure[Valores bajos de la componente H.]{\includegraphics[width=0.35\textwidth]{images/rojo1.jpg} }
+\subfigure[Valores altos de la componente H.]{\includegraphics[width=0.35\textwidth]{images/rojo2.jpg} }
+\subfigure[OR de ambas máscaras.]{\includegraphics[width=0.7\textwidth]{images/rojo.jpg} }
 
 \caption{Detección del color rojo en HSV.}
-
-\end{figure}
+\label{rojohsv}
+\end{figure} 
 \FloatBarrier
 
 Una vez se ha utilizado cualquiera de los dos métodos anteriores, se habrá obtenido una imagen binaria en la que el objetivo es blanco y el fondo es negro. En la figura \ref{binaria} puede observarse un ejemplo.\\
@@ -160,14 +158,14 @@ Una vez se ha utilizado cualquiera de los dos métodos anteriores, se habrá obt
 \end{figure}
 \FloatBarrier
 
-Para extraer los datos del objetivo detectado se ha relizado una detección de contornos. Sobre el contorno extraído y teniendo en cuenta que los objetivos a localizar son latas (es decir, objetivos rectangulares), se ha calculado el bounding box del cuerpo del objeto. Una vez hallado el rectágulo definido por el bounding box, utilizaremos las coordenadas de su centro como el objetivo de la torreta.
+Para extraer los datos del objetivo detectado se ha relizado una detección de contornos. Sobre el contorno extraído y teniendo en cuenta que los objetivos a localizar son latas (es decir, objetivos rectangulares), se ha calculado el bounding box del cuerpo del objeto y se han comprobado sus proporciones. Una vez hallado el rectágulo definido por el bounding box, utilizaremos las coordenadas de su centro como el objetivo de la torreta.
 
 \subsection{Visual Servoing}
 Tras obtener la posición dentro de la imagen del centroide del objeto, el siguiente paso es dirigir la cámara hacia el objeto. Al representar el centro de la imagen el punto en el que la torreta está apuntando, si se consigue central el objeto en la imagen observada la torreta estará apuntando al objeto. Una mirilla virtual es superpuesta a la imagen como indicador visual de este hecho.\\
 
 Para conseguir centrar al objeto en nuestra imagen, se necesita comandar los dos motores que muevan la cámara. Para cerrar el lazo de control de los motores se utiliza la visión por computador, lo que se conoce como Visual Servoing.\\
 
-El Visual Servoing , tal y como se encuentra en la literatura, conlleva matemáticas complejas, incluyendo una jacobiana visual, que no eran el objetivo de este trabajo. Por ello, se simplificó el problema, controlando la posición de los servos de la torreta en base a la distancia del objetivo al centro de la imagen. En el centro de la imagen se encuentra la mirilla virtual, por lo que cuando el objeto se encuentre en el centro de la imagen, estará dentro del alcance de la torreta.\\
+El Visual Servoing, tal y como se encuentra en la literatura, conlleva matemáticas complejas, incluyendo una jacobiana visual, que no eran el objetivo de este trabajo. Por ello, se simplificó el problema, controlando la posición de los servos de la torreta en base a la distancia del objetivo al centro de la imagen. En el centro de la imagen se encuentra la mirilla virtual, por lo que cuando el objeto se encuentre en el centro de la imagen, estará dentro del alcance de la torreta.\\
 
 Un sencillo control proporcional para cada eje fue implementado, usando esa distancia al centro de la imagen como error, siguiendo las fórmulas:
 
